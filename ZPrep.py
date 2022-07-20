@@ -1,5 +1,4 @@
 import datetime
-from importlib.resources import path
 import os
 import sys
 import time
@@ -32,6 +31,12 @@ def open_chrome():
     # ブラウザを開いた後に消えないようにオプションを指定
     options = Options()
     options.add_experimental_option('detach', True)
+
+    # エラーが出ないようにオプションを追加
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    options.use_chromium = True
+    options.add_argument('--ignore-certificate-errors')
+    options.add_argument('--ignore-ssl-errors')
 
     # クロームのオプションで音をミュートする
     chrome_options = webdriver.ChromeOptions()
@@ -77,7 +82,7 @@ def play_video_loop(driver):
         main()
         return
 
-    time.sleep(get_video_seconds(video, 1.5))
+    time.sleep(get_video_seconds(video, 3))
     play_video_loop(driver)
 
 # 視聴済みでない動画を再生する
@@ -87,6 +92,7 @@ def play_new_video(driver):
     # 視聴済みでない動画を取得し再生する
     for video in videos:
         if '視聴済み' not in video.text.strip():
+            print(f'{video.text}を視聴します')
             try:
                 video.find_element(By.CLASS_NAME, 'is-gate-closed')
                 print('再生可能な動画が見つかりませんでした')
@@ -102,7 +108,9 @@ def get_video_seconds(video, buffer):
     texts = video.text.split()
     # 動画の秒数を抽出する
     hms_time = texts[2].split(':')
-    return datetime.timedelta(minutes=int(hms_time[0]), seconds=int(hms_time[1])).total_seconds() + buffer
+    wait_seconds = datetime.timedelta(minutes=int(hms_time[0]), seconds=int(hms_time[1])).total_seconds() + buffer
+    print(f'待機時間{wait_seconds}秒')
+    return wait_seconds
 
 # XPATHの入力フィールドにテキストを入力する
 def send_text(XPATH, text, driver):
