@@ -1,4 +1,5 @@
 import datetime
+from importlib.resources import path
 import os
 import sys
 import time
@@ -37,7 +38,7 @@ def open_chrome():
     chrome_options.add_argument('--mute-audio')
 
     # オプションをドライバに適用
-    driver = webdriver.Chrome(options=options, chrome_options=chrome_options)
+    driver = webdriver.Chrome(webdriver.Chrome(resource_path('./driver/chromedriver.exe')), options=options, chrome_options=chrome_options)
 
     # N予備校のログイン画面を開く
     driver.get('https://www.nnn.ed.nico/login?next_url=https%3A%2F%2Fwww.nnn.ed.nico%2Fmy_course')
@@ -117,6 +118,13 @@ def temp_path(relative_path):
         base_path = sys._MEIPASS
     except Exception:
         base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.dirname(__file__)
     return os.path.join(base_path, relative_path)
 
 # データのファイルの読み込みを試みる
