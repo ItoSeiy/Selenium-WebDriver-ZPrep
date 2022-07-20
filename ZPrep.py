@@ -113,13 +113,6 @@ def send_text(XPATH, text, driver):
 def create_info_window(window_name, message):
     messagebox.showinfo(window_name, message)
 
-def temp_path(relative_path):
-    try:
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-    return os.path.join(base_path, relative_path)
-
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
@@ -202,7 +195,7 @@ def main():
     btn.place(x=130, y=150)
 
     #アイコン
-    tki.iconbitmap(temp_path('icon.ico'))
+    tki.iconbitmap(resource_path('icon.ico'))
 
     # 画面をそのまま表示
     tki.mainloop()
