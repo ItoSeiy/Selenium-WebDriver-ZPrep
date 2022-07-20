@@ -1,1 +1,16 @@
 *.ico
+ZPrep.spec
+build/ZPrep/Analysis-00.toc
+build/ZPrep/base_library.zip
+build/ZPrep/EXE-00.toc
+build/ZPrep/PKG-00.toc
+build/ZPrep/PYZ-00.pyz
+build/ZPrep/PYZ-00.toc
+build/ZPrep/Tree-00.toc
+build/ZPrep/Tree-01.toc
+build/ZPrep/Tree-02.toc
+build/ZPrep/warn-ZPrep.txt
+build/ZPrep/xref-ZPrep.html
+build/ZPrep/ZPrep.exe.manifest
+build/ZPrep/ZPrep.pkg
+dist/ZPrep.exe
