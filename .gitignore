@@ -3,4 +3,3 @@ ZPrep.spec
 build/
 dist/
 chromedriver.exe
-SaveData.text

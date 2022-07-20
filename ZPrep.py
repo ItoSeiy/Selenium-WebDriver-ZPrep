@@ -1,10 +1,10 @@
 import datetime
+from importlib.resources import path
 import os
 import sys
 import time
 import tkinter
 from contextlib import nullcontext
-from os import path
 from tkinter import messagebox
 
 import chromedriver_binary
@@ -14,8 +14,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
 appname = "Z予備クン"
+appauthor = "IS"
+data_path = user_data_dir(appname, appauthor)
 file_name = 'SaveData.text'
-data_path = path.join(path.dirname(__file__), file_name)
 save_data = True
 
 student_id = ''
@@ -129,7 +130,7 @@ def resource_path(relative_path):
 # データのファイルの読み込みを試みる
 def try_read_data_file():
     try:
-        with open(data_path, encoding='utf-8') as f:
+        with open(f'{data_path}/{file_name}', encoding='utf-8') as f:
             global student_id, password, chapter_url
             data = f.read().split(' ')
             print(data)
@@ -144,7 +145,8 @@ def try_write_data_file():
     global save_data, student_id, password, chapter_url
     save_data = save_data_box.getboolean(save_data)
     if save_data:
-        with open(data_path, "w+") as f:
+        os.makedirs(data_path, exist_ok=True)
+        with open(f'{data_path}/{file_name}', "w+") as f:
             f.writelines(student_id + ' ' + password + ' '+ chapter_url)
             f.close()
 
