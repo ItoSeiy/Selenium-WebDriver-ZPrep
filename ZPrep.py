@@ -4,6 +4,7 @@ import sys
 import time
 import tkinter
 from contextlib import nullcontext
+from tkinter import messagebox
 
 import chromedriver_binary
 from appdirs import *
@@ -20,6 +21,11 @@ save_data = True
 student_id = ''
 password = ''
 chapter_url = ''
+
+id_txt = ''
+password_txt = ''
+chapter_url_txt = ''
+save_data_box = ''
 
 def open_chrome():
     # ブラウザを開いた後に消えないようにオプションを指定
@@ -58,28 +64,20 @@ def open_chrome():
     time.sleep(1.5)
 
     # 動画をテストやレポートまで再生し続ける
-    #play_video_loop(driver)
-    videos = driver.find_elements(By.CLASS_NAME, 'movie')
-    for video in videos:
-        if '視聴済み' not in video.text.strip():
-            try:
-                print('新しい動画を再生します')
-                video.click()
-                return video
-            except:
-                print('再生出来る動画が無くなりました')
-                return nullcontext
+    play_video_loop(driver)
 
 # 再生できる限り動画を再生し続ける
 def play_video_loop(driver):
     video = play_new_video(driver)
+
+    if(video == nullcontext):
+        print('windowを新たに開きます')
+        create_info_window('お知らせ', '確認テストまたはレポートに到達しました\n新しくZ予備クンのウィンドウを作成します')
+        main()
+        return
+
     time.sleep(get_video_seconds(video, 1.5))
     play_video_loop(driver)
-
-# XPATHの入力フィールドにテキストを入力する
-def send_text(XPATH, text, driver):
-    field = driver.find_element(By.XPATH, XPATH)
-    field.send_keys(text)
 
 # 視聴済みでない動画を再生する
 def play_new_video(driver):
@@ -89,12 +87,13 @@ def play_new_video(driver):
     for video in videos:
         if '視聴済み' not in video.text.strip():
             try:
+                video.find_element(By.CLASS_NAME, 'is-gate-closed')
+                print('再生可能な動画が見つかりませんでした')
+                return nullcontext
+            except Exception:
                 print('新しい動画を再生します')
                 video.click()
                 return video
-            except:
-                print('再生出来る動画が無くなりました')
-                return nullcontext
 
 # 動画の秒数を取得する
 def get_video_seconds(video, buffer):
@@ -103,6 +102,15 @@ def get_video_seconds(video, buffer):
     # 動画の秒数を抽出する
     hms_time = texts[2].split(':')
     return datetime.timedelta(minutes=int(hms_time[0]), seconds=int(hms_time[1])).total_seconds() + buffer
+
+# XPATHの入力フィールドにテキストを入力する
+def send_text(XPATH, text, driver):
+    field = driver.find_element(By.XPATH, XPATH)
+    field.send_keys(text)
+
+# お知らせのwindowを開く
+def create_info_window(window_name, message):
+    messagebox.showinfo(window_name, message)
 
 def temp_path(relative_path):
     try:
@@ -134,54 +142,61 @@ def try_write_data_file():
             f.writelines(student_id + ' ' + password + ' '+ chapter_url)
             f.close()
 
+# グローバル変数にデータを入力する
 def set_data_from_box():
     global student_id, password, chapter_url
     student_id = id_txt.get()
     password = password_txt.get()
     chapter_url = chapter_url_txt.get()
 
-# データの読み込みを試みる
-try_read_data_file()
+def main():
 
-# 画面作成
-tki = tkinter.Tk()
-tki.geometry('300x200')
-tki.title(appname)
+    global id_txt, password_txt, chapter_url_txt, save_data_box
 
-# ラベル
-id_label = tkinter.Label(text='学籍番号')
-id_label.place(x=30, y=30)
+    # データの読み込みを試みる
+    try_read_data_file()
 
-password_label = tkinter.Label(text='パスワード')
-password_label.place(x=30, y=60)
+    # 画面作成
+    tki = tkinter.Tk()
+    tki.geometry('300x200')
+    tki.title(appname)
 
-chapter_url_label = tkinter.Label(text='チャプターのURL')
-chapter_url_label.place(x=5, y=90)
+    # ラベル
+    id_label = tkinter.Label(text='学籍番号')
+    id_label.place(x=30, y=30)
 
-# テキストボックス
-id_txt = tkinter.Entry(width=20)
-id_txt.insert(tkinter.END, student_id)
-id_txt.place(x=90, y=30)
+    password_label = tkinter.Label(text='パスワード')
+    password_label.place(x=30, y=60)
 
-password_txt = tkinter.Entry(width=20, show='*')
-password_txt.insert(tkinter.END, password)
-password_txt.place(x=90, y=60)
+    chapter_url_label = tkinter.Label(text='チャプターのURL')
+    chapter_url_label.place(x=5, y=90)
 
-chapter_url_txt = tkinter.Entry(width=20)
-chapter_url_txt.insert(tkinter.END, chapter_url)
-chapter_url_txt.place(x=90, y=90)
+    # テキストボックス
+    id_txt = tkinter.Entry(width=20)
+    id_txt.insert(tkinter.END, student_id)
+    id_txt.place(x=90, y=30)
 
-# チェックボックス
-save_data_box = tkinter.Checkbutton(tki, text='次回からもこの学籍番号、パスワード、URLを使用する')
-save_data_box.place(x=30, y=120)
-save_data_box.select()
+    password_txt = tkinter.Entry(width=20, show='*')
+    password_txt.insert(tkinter.END, password)
+    password_txt.place(x=90, y=60)
 
-# ボタン
-btn = tkinter.Button(tki, text='始める', command=lambda:[set_data_from_box() , try_write_data_file(), tki.destroy(), open_chrome()])
-btn.place(x=130, y=150)
+    chapter_url_txt = tkinter.Entry(width=20)
+    chapter_url_txt.insert(tkinter.END, chapter_url)
+    chapter_url_txt.place(x=90, y=90)
 
-#アイコン
-tki.iconbitmap(temp_path('icon.ico'))
+    # チェックボックス
+    save_data_box = tkinter.Checkbutton(tki, text='次回からもこの学籍番号、パスワード、URLを使用する')
+    save_data_box.place(x=30, y=120)
+    save_data_box.select()
 
-# 画面をそのまま表示
-tki.mainloop()
+    # ボタン
+    btn = tkinter.Button(tki, text='始める', command=lambda:[set_data_from_box() , try_write_data_file(), tki.destroy(), open_chrome()])
+    btn.place(x=130, y=150)
+
+    #アイコン
+    tki.iconbitmap(temp_path('icon.ico'))
+
+    # 画面をそのまま表示
+    tki.mainloop()
+
+main()
