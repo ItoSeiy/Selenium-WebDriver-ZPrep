@@ -1,5 +1,7 @@
+from cgitb import text
 import datetime
 import os
+from statistics import mean
 import sys
 import time
 import tkinter
@@ -7,6 +9,7 @@ import webbrowser
 from tkinter import messagebox
 
 import chromedriver_binary
+import pygame
 from appdirs import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -29,7 +32,7 @@ def open_chrome():
     chrome_options.add_argument('--mute-audio')
 
     # オプションをドライバに適用
-    driver = webdriver.Chrome(resource_path('./driver/chromedriver.exe'), options=options, chrome_options=chrome_options)
+    driver = webdriver.Chrome(resource_path('chromedriver.exe'), options=options, chrome_options=chrome_options)
 
     # N予備校のログイン画面を開く
     driver.get('https://www.nnn.ed.nico/login?next_url=https%3A%2F%2Fwww.nnn.ed.nico%2Fmy_course')
@@ -49,7 +52,7 @@ def open_chrome():
     try:
         driver.find_element(By.XPATH, '//*[@id="sections-contents"]/div[1]/div[1]/div[2]/div/div[1]').click()
     except:
-        print('')
+        None
 
     time.sleep(1.5)
 
@@ -64,8 +67,14 @@ def play_video_loop(driver : webelement.WebElement):
         print('windowを新たに開きます')
         driver.quit()
         webbrowser.open(chapter_url)
-        messagebox.showinfo('お知らせ', '確認テストまたはレポートに到達しました'
-                            '\nOKボタンでZ予備クンを新たに開きます')
+        if(use_sound_notice):
+            pygame.mixer.init()
+            pygame.mixer.music.load(resource_path('ワッカさん.mp3'))
+            pygame.mixer.music.set_volume(notice_sound_scale)
+            pygame.mixer.music.play()
+        if(use_window_notice):
+            messagebox.showinfo('お知らせ', '確認テストまたはレポートに到達しました'
+                                '\nOKボタンでZ予備クンを新たに開きます')
         create_window()
         return
 
@@ -133,16 +142,17 @@ def resource_path(relative_path):
 
 # グローバル変数にデータを入力する
 def set_data_from_box():
-    global student_id, password, chapter_url
+    global student_id, password, chapter_url, notice_sound_scale
     student_id = id_txt.get()
     password = password_txt.get()
     chapter_url = chapter_url_txt.get()
+    notice_sound_scale = notice_sound_scale_widget.get()
 
 # データのファイルの読み込みを試みる
 def try_read_data_file():
     try:
         with open(f'{data_path}/{file_name}', encoding='utf-8') as f:
-            global student_id, password, chapter_url, use_sound_notice, use_window_notice
+            global student_id, password, chapter_url, use_sound_notice, use_window_notice, notice_sound_scale
             data = f.read().split(' ')
             print(data)
             student_id = data[0]
@@ -152,29 +162,33 @@ def try_read_data_file():
                 use_sound_notice = True
             if(data[4] == 'True'):
                 use_window_notice = True
+            notice_sound_scale = data[5]
     except Exception:
         return
 
 # 次回からログインを省略するモードだったらテキストファイルにデータを保存する
 def try_write_data_file():
-    global save_data, student_id, password, chapter_url
+    global save_data, student_id, password, chapter_url, notice_sound_scale
     if save_data:
         os.makedirs(data_path, exist_ok=True)
         with open(f'{data_path}/{file_name}', "w+") as f:
-            f.writelines(student_id + ' ' + password + ' '+ chapter_url + ' '+ str(use_sound_notice_var.get()) + ' '+ str(use_window_notice_var.get()))
+            f.writelines(student_id + ' ' + password + ' '+ chapter_url + ' '+
+                        str(use_sound_notice_var.get()) + ' '+ str(use_window_notice_var.get()) + ' ' +
+                        str(notice_sound_scale))
             f.close()
 
 def create_window():
 
     global id_txt, password_txt, chapter_url_txt, save_data_box, use_sound_notice_box, use_window_notice_box
     global use_sound_notice, use_window_notice, use_sound_notice_var, use_window_notice_var
+    global notice_sound_scale_widget
 
     # データの読み込みを試みる
     try_read_data_file()
 
     # 画面作成
     tki = tkinter.Tk()
-    tki.geometry('300x220')
+    tki.geometry('320x220')
     tki.title(appname)
 
     # ラベル
@@ -189,6 +203,9 @@ def create_window():
 
     notice_box_label = tkinter.Label(text='通知のモード')
     notice_box_label.place(x=40, y=120)
+
+    notice_sound_label = tkinter.Label(text='ワッカさんの声量', font=("MS明朝", "8"))
+    notice_sound_label.place(x=230, y=28)
 
     # テキストボックス
     id_txt = tkinter.Entry(width=20)
@@ -210,15 +227,20 @@ def create_window():
 
     use_sound_notice_var = tkinter.BooleanVar()
     use_sound_notice_box = tkinter.Checkbutton(tki, text='ワッカさん', variable=use_sound_notice_var)
-    use_sound_notice_box.place(x=120, y=120)
+    use_sound_notice_box.place(x=110, y=120)
     if(use_sound_notice):
         use_sound_notice_box.select()
 
     use_window_notice_var = tkinter.BooleanVar()
     use_window_notice_box = tkinter.Checkbutton(tki, text='ウィンドウ', variable=use_window_notice_var)
-    use_window_notice_box.place(x=190, y=120)
+    use_window_notice_box.place(x=180, y=120)
     if(use_window_notice):
         use_window_notice_box.select()
+
+    # ワッカさんの音量を調整するスケールウィジェット
+    notice_sound_scale_widget = tkinter.Scale(tki, orient=tkinter.VERTICAL, from_=0, to=1, resolution=0.1, length = 100)
+    notice_sound_scale_widget.place(x=265, y=45)
+    notice_sound_scale_widget.set(notice_sound_scale)
 
     # ボタン
     btn = tkinter.Button(tki, text='始める', command=lambda:[set_data_from_box() , try_write_data_file(), tki.destroy(), open_chrome()])
@@ -249,6 +271,12 @@ id_txt, password_txt, chapter_url_txt= None, None, None
 
 # ウィンドウのチェックボックス
 save_data_box, use_sound_notice_box, use_window_notice_box = None, None, None
+
+# ウィンドウの通知の音量調整のスケールウィジェット
+notice_sound_scale_widget = None
+
+# 通知の音量
+notice_sound_scale = 0.1
 
 # 現在再生している動画のタイトル
 current_video_name = None
