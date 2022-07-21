@@ -1,8 +1,10 @@
+from cgitb import text
 import datetime
 import os
 import sys
 import time
 import tkinter
+from turtle import goto
 import webbrowser
 from tkinter import messagebox
 
@@ -131,29 +133,6 @@ def resource_path(relative_path):
         base_path = os.path.dirname(__file__)
     return os.path.join(base_path, relative_path)
 
-# データのファイルの読み込みを試みる
-def try_read_data_file():
-    try:
-        with open(f'{data_path}/{file_name}', encoding='utf-8') as f:
-            global student_id, password, chapter_url
-            data = f.read().split(' ')
-            print(data)
-            student_id = data[0]
-            password = data[1]
-            chapter_url = data[2]
-    except Exception:
-        None
-
-# 次回からログインを省略するモードだったらテキストファイルにデータを保存する
-def try_write_data_file():
-    global save_data, student_id, password, chapter_url
-    save_data = save_data_box.getboolean(save_data)
-    if save_data:
-        os.makedirs(data_path, exist_ok=True)
-        with open(f'{data_path}/{file_name}', "w+") as f:
-            f.writelines(student_id + ' ' + password + ' '+ chapter_url)
-            f.close()
-
 # グローバル変数にデータを入力する
 def set_data_from_box():
     global student_id, password, chapter_url
@@ -161,16 +140,43 @@ def set_data_from_box():
     password = password_txt.get()
     chapter_url = chapter_url_txt.get()
 
+# データのファイルの読み込みを試みる
+def try_read_data_file():
+    try:
+        with open(f'{data_path}/{file_name}', encoding='utf-8') as f:
+            global student_id, password, chapter_url, use_sound_notice, use_window_notice
+            data = f.read().split(' ')
+            print(data)
+            student_id = data[0]
+            password = data[1]
+            chapter_url = data[2]
+            if(data[3] == 'True'):
+                use_sound_notice = True
+            if(data[4] == 'True'):
+                use_window_notice = True
+    except Exception:
+        return
+
+# 次回からログインを省略するモードだったらテキストファイルにデータを保存する
+def try_write_data_file():
+    global save_data, student_id, password, chapter_url
+    if save_data:
+        os.makedirs(data_path, exist_ok=True)
+        with open(f'{data_path}/{file_name}', "w+") as f:
+            f.writelines(student_id + ' ' + password + ' '+ chapter_url + ' '+ str(use_sound_notice_var.get()) + ' '+ str(use_window_notice_var.get()))
+            f.close()
+
 def create_window():
 
-    global id_txt, password_txt, chapter_url_txt, save_data_box
+    global id_txt, password_txt, chapter_url_txt, save_data_box, use_sound_notice_box, use_window_notice_box
+    global use_sound_notice, use_window_notice, use_sound_notice_var, use_window_notice_var
 
     # データの読み込みを試みる
     try_read_data_file()
 
     # 画面作成
     tki = tkinter.Tk()
-    tki.geometry('300x200')
+    tki.geometry('300x220')
     tki.title(appname)
 
     # ラベル
@@ -183,27 +189,42 @@ def create_window():
     chapter_url_label = tkinter.Label(text='チャプターのURL')
     chapter_url_label.place(x=5, y=90)
 
+    notice_box_label = tkinter.Label(text='通知のモード')
+    notice_box_label.place(x=40, y=120)
+
     # テキストボックス
     id_txt = tkinter.Entry(width=20)
     id_txt.insert(tkinter.END, student_id)
-    id_txt.place(x=90, y=30)
+    id_txt.place(x=100, y=30)
 
     password_txt = tkinter.Entry(width=20, show='*')
     password_txt.insert(tkinter.END, password)
-    password_txt.place(x=90, y=60)
+    password_txt.place(x=100, y=60)
 
     chapter_url_txt = tkinter.Entry(width=20)
     chapter_url_txt.insert(tkinter.END, chapter_url)
-    chapter_url_txt.place(x=90, y=90)
+    chapter_url_txt.place(x=100, y=90)
 
     # チェックボックス
-    save_data_box = tkinter.Checkbutton(tki, text='次回からもこの学籍番号、パスワード、URLを使用する')
-    save_data_box.place(x=30, y=120)
+    save_data_box = tkinter.Checkbutton(tki, text='次回からもこの設定を利用する')
+    save_data_box.place(x=40, y=150)
     save_data_box.select()
+
+    use_sound_notice_var = tkinter.BooleanVar()
+    use_sound_notice_box = tkinter.Checkbutton(tki, text='ワッカさん', variable=use_sound_notice_var)
+    use_sound_notice_box.place(x=120, y=120)
+    if(use_sound_notice):
+        use_sound_notice_box.select()
+
+    use_window_notice_var = tkinter.BooleanVar()
+    use_window_notice_box = tkinter.Checkbutton(tki, text='ウィンドウ', variable=use_window_notice_var)
+    use_window_notice_box.place(x=190, y=120)
+    if(use_window_notice):
+        use_window_notice_box.select()
 
     # ボタン
     btn = tkinter.Button(tki, text='始める', command=lambda:[set_data_from_box() , try_write_data_file(), tki.destroy(), open_chrome()])
-    btn.place(x=130, y=150)
+    btn.place(x=140, y=180)
 
     #アイコン
     tki.iconbitmap(resource_path('icon.ico'))
@@ -215,13 +236,21 @@ appname = "Z予備クン"
 appauthor = "IS"
 data_path = user_data_dir(appname, appauthor)
 file_name = 'SaveData.text'
-save_data = True
 
 # 学籍番号 パスワード URLの値
 student_id, password, chapter_url = '', '', ''
 
+# 通知の方法に関するフラグ
+use_sound_notice, use_window_notice = False, False
+
+# データをセーブするかどうかのフラグ
+save_data = True
+
 # ウィンドウのテキストボックス
-id_txt, password_txt, chapter_url_txt, save_data_box = None, None, None, None
+id_txt, password_txt, chapter_url_txt= None, None, None
+
+# ウィンドウのチェックボックス
+save_data_box, use_sound_notice_box, use_window_notice_box = None, None, None
 
 # 現在再生している動画のタイトル
 current_video_name = None
