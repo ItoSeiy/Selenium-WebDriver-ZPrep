@@ -3,7 +3,7 @@ import os
 import sys
 import time
 import tkinter
-from contextlib import nullcontext
+import webbrowser
 from tkinter import messagebox
 
 import chromedriver_binary
@@ -59,10 +59,13 @@ def open_chrome():
 def play_video_loop(driver):
     video = play_new_video(driver)
 
-    if(video == nullcontext):
+    if(video == None):
         print('windowを新たに開きます')
-        create_info_window('お知らせ', '確認テストまたはレポートに到達しました\n新しくZ予備クンのウィンドウを作成します')
-        main()
+        driver.quit()
+        webbrowser.open(chapter_url)
+        messagebox.showinfo('お知らせ', '確認テストまたはレポートに到達しました'
+                            '\nOKボタンでZ予備クンを新たに開きます')
+        create_window()
         return
 
     time.sleep(get_video_seconds(video, 3))
@@ -79,7 +82,7 @@ def play_new_video(driver):
             try:
                 video.find_element(By.CLASS_NAME, 'is-gate-closed')
                 print('再生可能な動画が見つかりませんでした')
-                return nullcontext
+                return None
             except Exception:
                 print('新しい動画を再生します')
                 video.click()
@@ -118,7 +121,7 @@ def try_read_data_file():
             password = data[1]
             chapter_url = data[2]
     except Exception:
-        nullcontext
+        None
 
 # 次回からログインを省略するモードだったらテキストファイルにデータを保存する
 def try_write_data_file():
@@ -137,7 +140,7 @@ def set_data_from_box():
     password = password_txt.get()
     chapter_url = chapter_url_txt.get()
 
-def main():
+def create_window():
 
     global id_txt, password_txt, chapter_url_txt, save_data_box
 
