@@ -100,10 +100,6 @@ def send_text(XPATH, text, driver):
     field = driver.find_element(By.XPATH, XPATH)
     field.send_keys(text)
 
-# お知らせのwindowを開く
-def create_info_window(window_name, message):
-    messagebox.showinfo(window_name, message)
-
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
