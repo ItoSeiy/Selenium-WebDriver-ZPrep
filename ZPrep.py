@@ -1,10 +1,8 @@
-from cgitb import text
 import datetime
 import os
 import sys
 import time
 import tkinter
-from turtle import goto
 import webbrowser
 from tkinter import messagebox
 
