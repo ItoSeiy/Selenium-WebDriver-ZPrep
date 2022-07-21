@@ -64,12 +64,12 @@ def play_video_loop(driver : webelement.WebElement):
     video = play_new_video(driver)
 
     if(video == None):
-        print('windowを新たに開きます')
+        print('確認テストまたはレポートに到達しました')
         driver.quit()
         webbrowser.open(chapter_url)
         if(use_sound_notice):
             pygame.mixer.init()
-            pygame.mixer.music.load(resource_path('ワッカさん.mp3'))
+            pygame.mixer.music.load(resource_path('Wakka.mp3'))
             pygame.mixer.music.set_volume(notice_sound_scale)
             pygame.mixer.music.play()
         if(use_window_notice):
@@ -142,10 +142,12 @@ def resource_path(relative_path):
 
 # グローバル変数にデータを入力する
 def set_data_from_box():
-    global student_id, password, chapter_url, notice_sound_scale
+    global student_id, password, chapter_url, use_sound_notice, use_window_notice, notice_sound_scale
     student_id = id_txt.get()
     password = password_txt.get()
     chapter_url = chapter_url_txt.get()
+    use_sound_notice = use_sound_notice_var.get()
+    use_window_notice = use_window_notice_var.get()
     notice_sound_scale = notice_sound_scale_widget.get()
 
 # データのファイルの読み込みを試みる
@@ -173,7 +175,7 @@ def try_write_data_file():
         os.makedirs(data_path, exist_ok=True)
         with open(f'{data_path}/{file_name}', "w+") as f:
             f.writelines(student_id + ' ' + password + ' '+ chapter_url + ' '+
-                        str(use_sound_notice_var.get()) + ' '+ str(use_window_notice_var.get()) + ' ' +
+                        str(use_sound_notice) + ' '+ str(use_window_notice) + ' ' +
                         str(notice_sound_scale))
             f.close()
 
