@@ -11,6 +11,7 @@ from appdirs import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote import webelement
 
 def open_chrome():
     # ブラウザを開いた後に消えないようにオプションを指定
@@ -56,7 +57,7 @@ def open_chrome():
     play_video_loop(driver)
 
 # 再生できる限り動画を再生し続ける
-def play_video_loop(driver):
+def play_video_loop(driver : webelement.WebElement):
     video = play_new_video(driver)
 
     if(video == None):
@@ -68,38 +69,58 @@ def play_video_loop(driver):
         create_window()
         return
 
-    time.sleep(get_video_seconds(video, 3))
+    time.sleep(get_video_seconds(video))
     play_video_loop(driver)
 
 # 視聴済みでない動画を再生する
-def play_new_video(driver):
+def play_new_video(driver : webelement.WebElement):
     #すべての動画を取得する
     videos = driver.find_elements(By.CLASS_NAME, 'movie')
     # 視聴済みでない動画を取得し再生する
-    for video in videos:
+    for i, video in enumerate(videos):
         if '視聴済み' not in video.text.strip():
             print(f'{video.text}を視聴します')
             try:
                 video.find_element(By.CLASS_NAME, 'is-gate-closed')
                 print('再生可能な動画が見つかりませんでした')
                 return None
-            except Exception:
-                print('新しい動画を再生します')
-                video.click()
-                return video
+            except:
+                global current_video_name
+                if video.text == current_video_name:
+                    next_video = videos[i + 1]
+                    print(f'現在再生している動画を再生しようとしたので次の\n{next_video.text}を再生できるまで待機します')
+                    try_until_play_video(next_video)
+                    print(f'{video.text}を再生できるようになったので再生します')
+                    current_video_name = next_video.text
+                    return next_video
+                else:
+                    print('新しい動画の再生を試みます')
+                    try_until_play_video(video)
+                    print('新しい動画を再生しました')
+                    current_video_name = video.text
+                    return video
 
 # 動画の秒数を取得する
-def get_video_seconds(video, buffer):
+def get_video_seconds(video : webelement.WebElement):
     # 動画のタイトルを取得
     texts = video.text.split()
     # 動画の秒数を抽出する
     hms_time = texts[len(texts) - 1].split(':')
-    wait_seconds = datetime.timedelta(minutes=int(hms_time[0]), seconds=int(hms_time[1])).total_seconds() + buffer
+    wait_seconds = datetime.timedelta(minutes=int(hms_time[0]), seconds=int(hms_time[1])).total_seconds()
     print(f'待機時間{wait_seconds}秒')
     return wait_seconds
 
+# 動画が再生できるようになるまで繰り返す
+def try_until_play_video(video : webelement.WebElement):
+    video.click()
+    try:
+        video.find_element(By.CLASS_NAME, 'is-selected')
+    except:
+        time.sleep(1)
+        try_until_play_video(video)
+
 # XPATHの入力フィールドにテキストを入力する
-def send_text(XPATH, text, driver):
+def send_text(XPATH : str, text : str, driver : webelement.WebElement):
     field = driver.find_element(By.XPATH, XPATH)
     field.send_keys(text)
 
@@ -201,5 +222,8 @@ student_id, password, chapter_url = '', '', ''
 
 # ウィンドウのテキストボックス
 id_txt, password_txt, chapter_url_txt, save_data_box = None, None, None, None
+
+# 現在再生している動画のタイトル
+current_video_name = None
 
 create_window()
