@@ -107,7 +107,7 @@ def get_video_seconds(video, buffer):
     # 動画のタイトルを取得
     texts = video.text.split()
     # 動画の秒数を抽出する
-    hms_time = texts[2].split(':')
+    hms_time = texts[len(texts) - 1].split(':')
     wait_seconds = datetime.timedelta(minutes=int(hms_time[0]), seconds=int(hms_time[1])).total_seconds() + buffer
     print(f'待機時間{wait_seconds}秒')
     return wait_seconds
