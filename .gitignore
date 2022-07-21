@@ -3,3 +3,4 @@ ZPrep.spec
 build/
 dist/
 chromedriver.exe
+*.mp3

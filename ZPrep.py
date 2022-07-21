@@ -1,5 +1,7 @@
+from cgitb import text
 import datetime
 import os
+from statistics import mean
 import sys
 import time
 import tkinter
@@ -7,10 +9,12 @@ import webbrowser
 from tkinter import messagebox
 
 import chromedriver_binary
+import pygame
 from appdirs import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote import webelement
 
 def open_chrome():
     # ブラウザを開いた後に消えないようにオプションを指定
@@ -28,7 +32,7 @@ def open_chrome():
     chrome_options.add_argument('--mute-audio')
 
     # オプションをドライバに適用
-    driver = webdriver.Chrome(resource_path('./driver/chromedriver.exe'), options=options, chrome_options=chrome_options)
+    driver = webdriver.Chrome(resource_path('chromedriver.exe'), options=options, chrome_options=chrome_options)
 
     # N予備校のログイン画面を開く
     driver.get('https://www.nnn.ed.nico/login?next_url=https%3A%2F%2Fwww.nnn.ed.nico%2Fmy_course')
@@ -48,7 +52,7 @@ def open_chrome():
     try:
         driver.find_element(By.XPATH, '//*[@id="sections-contents"]/div[1]/div[1]/div[2]/div/div[1]').click()
     except:
-        print('')
+        None
 
     time.sleep(1.5)
 
@@ -56,50 +60,76 @@ def open_chrome():
     play_video_loop(driver)
 
 # 再生できる限り動画を再生し続ける
-def play_video_loop(driver):
+def play_video_loop(driver : webelement.WebElement):
     video = play_new_video(driver)
 
     if(video == None):
-        print('windowを新たに開きます')
+        print('確認テストまたはレポートに到達しました')
         driver.quit()
         webbrowser.open(chapter_url)
-        messagebox.showinfo('お知らせ', '確認テストまたはレポートに到達しました'
-                            '\nOKボタンでZ予備クンを新たに開きます')
+        if(use_sound_notice):
+            pygame.mixer.init()
+            pygame.mixer.music.load(resource_path('Wakka.mp3'))
+            pygame.mixer.music.set_volume(notice_sound_scale)
+            pygame.mixer.music.play()
+        if(use_window_notice):
+            messagebox.showinfo('お知らせ', '確認テストまたはレポートに到達しました'
+                                '\nOKボタンでZ予備クンを新たに開きます')
         create_window()
         return
 
-    time.sleep(get_video_seconds(video, 3))
+    time.sleep(get_video_seconds(video))
     play_video_loop(driver)
 
 # 視聴済みでない動画を再生する
-def play_new_video(driver):
+def play_new_video(driver : webelement.WebElement):
     #すべての動画を取得する
     videos = driver.find_elements(By.CLASS_NAME, 'movie')
     # 視聴済みでない動画を取得し再生する
-    for video in videos:
+    for i, video in enumerate(videos):
         if '視聴済み' not in video.text.strip():
             print(f'{video.text}を視聴します')
             try:
                 video.find_element(By.CLASS_NAME, 'is-gate-closed')
                 print('再生可能な動画が見つかりませんでした')
                 return None
-            except Exception:
-                print('新しい動画を再生します')
-                video.click()
-                return video
+            except:
+                global current_video_name
+                if video.text == current_video_name:
+                    next_video = videos[i + 1]
+                    print(f'現在再生している動画を再生しようとしたので次の\n{next_video.text}を再生できるまで待機します')
+                    try_until_play_video(next_video)
+                    print(f'{video.text}を再生できるようになったので再生します')
+                    current_video_name = next_video.text
+                    return next_video
+                else:
+                    print('新しい動画の再生を試みます')
+                    try_until_play_video(video)
+                    print('新しい動画を再生しました')
+                    current_video_name = video.text
+                    return video
 
 # 動画の秒数を取得する
-def get_video_seconds(video, buffer):
+def get_video_seconds(video : webelement.WebElement):
     # 動画のタイトルを取得
     texts = video.text.split()
     # 動画の秒数を抽出する
     hms_time = texts[len(texts) - 1].split(':')
-    wait_seconds = datetime.timedelta(minutes=int(hms_time[0]), seconds=int(hms_time[1])).total_seconds() + buffer
+    wait_seconds = datetime.timedelta(minutes=int(hms_time[0]), seconds=int(hms_time[1])).total_seconds()
     print(f'待機時間{wait_seconds}秒')
     return wait_seconds
 
+# 動画が再生できるようになるまで繰り返す
+def try_until_play_video(video : webelement.WebElement):
+    video.click()
+    try:
+        video.find_element(By.CLASS_NAME, 'is-selected')
+    except:
+        time.sleep(1)
+        try_until_play_video(video)
+
 # XPATHの入力フィールドにテキストを入力する
-def send_text(XPATH, text, driver):
+def send_text(XPATH : str, text : str, driver : webelement.WebElement):
     field = driver.find_element(By.XPATH, XPATH)
     field.send_keys(text)
 
@@ -110,46 +140,57 @@ def resource_path(relative_path):
         base_path = os.path.dirname(__file__)
     return os.path.join(base_path, relative_path)
 
+# グローバル変数にデータを入力する
+def set_data_from_box():
+    global student_id, password, chapter_url, use_sound_notice, use_window_notice, notice_sound_scale
+    student_id = id_txt.get()
+    password = password_txt.get()
+    chapter_url = chapter_url_txt.get()
+    use_sound_notice = use_sound_notice_var.get()
+    use_window_notice = use_window_notice_var.get()
+    notice_sound_scale = notice_sound_scale_widget.get()
+
 # データのファイルの読み込みを試みる
 def try_read_data_file():
     try:
         with open(f'{data_path}/{file_name}', encoding='utf-8') as f:
-            global student_id, password, chapter_url
+            global student_id, password, chapter_url, use_sound_notice, use_window_notice, notice_sound_scale
             data = f.read().split(' ')
             print(data)
             student_id = data[0]
             password = data[1]
             chapter_url = data[2]
+            if(data[3] == 'True'):
+                use_sound_notice = True
+            if(data[4] == 'True'):
+                use_window_notice = True
+            notice_sound_scale = data[5]
     except Exception:
-        None
+        return
 
 # 次回からログインを省略するモードだったらテキストファイルにデータを保存する
 def try_write_data_file():
-    global save_data, student_id, password, chapter_url
-    save_data = save_data_box.getboolean(save_data)
+    global save_data, student_id, password, chapter_url, notice_sound_scale
     if save_data:
         os.makedirs(data_path, exist_ok=True)
         with open(f'{data_path}/{file_name}', "w+") as f:
-            f.writelines(student_id + ' ' + password + ' '+ chapter_url)
+            f.writelines(student_id + ' ' + password + ' '+ chapter_url + ' '+
+                        str(use_sound_notice) + ' '+ str(use_window_notice) + ' ' +
+                        str(notice_sound_scale))
             f.close()
-
-# グローバル変数にデータを入力する
-def set_data_from_box():
-    global student_id, password, chapter_url
-    student_id = id_txt.get()
-    password = password_txt.get()
-    chapter_url = chapter_url_txt.get()
 
 def create_window():
 
-    global id_txt, password_txt, chapter_url_txt, save_data_box
+    global id_txt, password_txt, chapter_url_txt, save_data_box, use_sound_notice_box, use_window_notice_box
+    global use_sound_notice, use_window_notice, use_sound_notice_var, use_window_notice_var
+    global notice_sound_scale_widget
 
     # データの読み込みを試みる
     try_read_data_file()
 
     # 画面作成
     tki = tkinter.Tk()
-    tki.geometry('300x200')
+    tki.geometry('320x220')
     tki.title(appname)
 
     # ラベル
@@ -162,27 +203,50 @@ def create_window():
     chapter_url_label = tkinter.Label(text='チャプターのURL')
     chapter_url_label.place(x=5, y=90)
 
+    notice_box_label = tkinter.Label(text='通知のモード')
+    notice_box_label.place(x=40, y=120)
+
+    notice_sound_label = tkinter.Label(text='ワッカさんの声量', font=("MS明朝", "8"))
+    notice_sound_label.place(x=230, y=28)
+
     # テキストボックス
     id_txt = tkinter.Entry(width=20)
     id_txt.insert(tkinter.END, student_id)
-    id_txt.place(x=90, y=30)
+    id_txt.place(x=100, y=30)
 
     password_txt = tkinter.Entry(width=20, show='*')
     password_txt.insert(tkinter.END, password)
-    password_txt.place(x=90, y=60)
+    password_txt.place(x=100, y=60)
 
     chapter_url_txt = tkinter.Entry(width=20)
     chapter_url_txt.insert(tkinter.END, chapter_url)
-    chapter_url_txt.place(x=90, y=90)
+    chapter_url_txt.place(x=100, y=90)
 
     # チェックボックス
-    save_data_box = tkinter.Checkbutton(tki, text='次回からもこの学籍番号、パスワード、URLを使用する')
-    save_data_box.place(x=30, y=120)
+    save_data_box = tkinter.Checkbutton(tki, text='次回からもこの設定を利用する')
+    save_data_box.place(x=40, y=150)
     save_data_box.select()
+
+    use_sound_notice_var = tkinter.BooleanVar()
+    use_sound_notice_box = tkinter.Checkbutton(tki, text='ワッカさん', variable=use_sound_notice_var)
+    use_sound_notice_box.place(x=110, y=120)
+    if(use_sound_notice):
+        use_sound_notice_box.select()
+
+    use_window_notice_var = tkinter.BooleanVar()
+    use_window_notice_box = tkinter.Checkbutton(tki, text='ウィンドウ', variable=use_window_notice_var)
+    use_window_notice_box.place(x=180, y=120)
+    if(use_window_notice):
+        use_window_notice_box.select()
+
+    # ワッカさんの音量を調整するスケールウィジェット
+    notice_sound_scale_widget = tkinter.Scale(tki, orient=tkinter.VERTICAL, from_=0, to=1, resolution=0.1, length = 100)
+    notice_sound_scale_widget.place(x=265, y=45)
+    notice_sound_scale_widget.set(notice_sound_scale)
 
     # ボタン
     btn = tkinter.Button(tki, text='始める', command=lambda:[set_data_from_box() , try_write_data_file(), tki.destroy(), open_chrome()])
-    btn.place(x=130, y=150)
+    btn.place(x=140, y=180)
 
     #アイコン
     tki.iconbitmap(resource_path('icon.ico'))
@@ -194,12 +258,29 @@ appname = "Z予備クン"
 appauthor = "IS"
 data_path = user_data_dir(appname, appauthor)
 file_name = 'SaveData.text'
-save_data = True
 
 # 学籍番号 パスワード URLの値
 student_id, password, chapter_url = '', '', ''
 
+# 通知の方法に関するフラグ
+use_sound_notice, use_window_notice = False, False
+
+# データをセーブするかどうかのフラグ
+save_data = True
+
 # ウィンドウのテキストボックス
-id_txt, password_txt, chapter_url_txt, save_data_box = None, None, None, None
+id_txt, password_txt, chapter_url_txt= None, None, None
+
+# ウィンドウのチェックボックス
+save_data_box, use_sound_notice_box, use_window_notice_box = None, None, None
+
+# ウィンドウの通知の音量調整のスケールウィジェット
+notice_sound_scale_widget = None
+
+# 通知の音量
+notice_sound_scale = 0.1
+
+# 現在再生している動画のタイトル
+current_video_name = None
 
 create_window()
