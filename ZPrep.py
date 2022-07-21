@@ -12,21 +12,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
-appname = "Z予備クン"
-appauthor = "IS"
-data_path = user_data_dir(appname, appauthor)
-file_name = 'SaveData.text'
-save_data = True
-
-student_id = ''
-password = ''
-chapter_url = ''
-
-id_txt = ''
-password_txt = ''
-chapter_url_txt = ''
-save_data_box = ''
-
 def open_chrome():
     # ブラウザを開いた後に消えないようにオプションを指定
     options = Options()
@@ -48,8 +33,6 @@ def open_chrome():
     # N予備校のログイン画面を開く
     driver.get('https://www.nnn.ed.nico/login?next_url=https%3A%2F%2Fwww.nnn.ed.nico%2Fmy_course')
     driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/div[3]/div[1]/div[1]/div[2]/div[2]/a').click()
-
-    global student_id, password, chapter_url
 
     time.sleep(1.5)
 
@@ -208,4 +191,16 @@ def main():
     # 画面をそのまま表示
     tki.mainloop()
 
-main()
+appname = "Z予備クン"
+appauthor = "IS"
+data_path = user_data_dir(appname, appauthor)
+file_name = 'SaveData.text'
+save_data = True
+
+# 学籍番号 パスワード URLの値
+student_id, password, chapter_url = '', '', ''
+
+# ウィンドウのテキストボックス
+id_txt, password_txt, chapter_url_txt, save_data_box = None, None, None, None
+
+create_window()
