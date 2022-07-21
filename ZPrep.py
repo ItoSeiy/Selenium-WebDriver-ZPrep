@@ -3,7 +3,7 @@ import os
 import sys
 import time
 import tkinter
-from contextlib import nullcontext
+import webbrowser
 from tkinter import messagebox
 
 import chromedriver_binary
@@ -11,21 +11,6 @@ from appdirs import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-
-appname = "Z予備クン"
-appauthor = "IS"
-data_path = user_data_dir(appname, appauthor)
-file_name = 'SaveData.text'
-save_data = True
-
-student_id = ''
-password = ''
-chapter_url = ''
-
-id_txt = ''
-password_txt = ''
-chapter_url_txt = ''
-save_data_box = ''
 
 def open_chrome():
     # ブラウザを開いた後に消えないようにオプションを指定
@@ -48,8 +33,6 @@ def open_chrome():
     # N予備校のログイン画面を開く
     driver.get('https://www.nnn.ed.nico/login?next_url=https%3A%2F%2Fwww.nnn.ed.nico%2Fmy_course')
     driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/div[3]/div[1]/div[1]/div[2]/div[2]/a').click()
-
-    global student_id, password, chapter_url
 
     time.sleep(1.5)
 
@@ -76,10 +59,13 @@ def open_chrome():
 def play_video_loop(driver):
     video = play_new_video(driver)
 
-    if(video == nullcontext):
+    if(video == None):
         print('windowを新たに開きます')
-        create_info_window('お知らせ', '確認テストまたはレポートに到達しました\n新しくZ予備クンのウィンドウを作成します')
-        main()
+        driver.quit()
+        webbrowser.open(chapter_url)
+        messagebox.showinfo('お知らせ', '確認テストまたはレポートに到達しました'
+                            '\nOKボタンでZ予備クンを新たに開きます')
+        create_window()
         return
 
     time.sleep(get_video_seconds(video, 3))
@@ -96,7 +82,7 @@ def play_new_video(driver):
             try:
                 video.find_element(By.CLASS_NAME, 'is-gate-closed')
                 print('再生可能な動画が見つかりませんでした')
-                return nullcontext
+                return None
             except Exception:
                 print('新しい動画を再生します')
                 video.click()
@@ -117,10 +103,6 @@ def send_text(XPATH, text, driver):
     field = driver.find_element(By.XPATH, XPATH)
     field.send_keys(text)
 
-# お知らせのwindowを開く
-def create_info_window(window_name, message):
-    messagebox.showinfo(window_name, message)
-
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
@@ -139,7 +121,7 @@ def try_read_data_file():
             password = data[1]
             chapter_url = data[2]
     except Exception:
-        nullcontext
+        None
 
 # 次回からログインを省略するモードだったらテキストファイルにデータを保存する
 def try_write_data_file():
@@ -158,7 +140,7 @@ def set_data_from_box():
     password = password_txt.get()
     chapter_url = chapter_url_txt.get()
 
-def main():
+def create_window():
 
     global id_txt, password_txt, chapter_url_txt, save_data_box
 
@@ -208,4 +190,16 @@ def main():
     # 画面をそのまま表示
     tki.mainloop()
 
-main()
+appname = "Z予備クン"
+appauthor = "IS"
+data_path = user_data_dir(appname, appauthor)
+file_name = 'SaveData.text'
+save_data = True
+
+# 学籍番号 パスワード URLの値
+student_id, password, chapter_url = '', '', ''
+
+# ウィンドウのテキストボックス
+id_txt, password_txt, chapter_url_txt, save_data_box = None, None, None, None
+
+create_window()
