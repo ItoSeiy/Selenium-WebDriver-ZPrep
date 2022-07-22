@@ -165,7 +165,6 @@ def try_write_data_file():
                         str(notice_sound_scale))
             f.close()
 
-
 # ----------------------------------------
 
 # 最初に呼び出される tkinterのウィンドウを描画する
