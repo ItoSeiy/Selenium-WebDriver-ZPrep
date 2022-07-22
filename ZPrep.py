@@ -44,6 +44,7 @@ def play_new_video(driver : webelement.WebElement):
     for i, video in enumerate(videos):
         if '視聴済み' not in video.text.strip():
             print(f'{video.text}が再生候補として見つかりました')
+            print(f'indexは{video_and_test_elements_index}')
             if video.text == current_video_name:
                 next_video = videos[i + 1]
                 print(f'現在再生している動画を再生しようとしたので次の\n{next_video.text}を再生できるまで待機します')
@@ -55,7 +56,6 @@ def play_new_video(driver : webelement.WebElement):
                 print('新しい動画の再生を試みます')
                 try_until_play_video(video)
                 print('新しい動画を再生しました')
-                print(f'indexは{video_and_test_elements_index}')
                 current_video_name = video.text
                 return video
     print('例外 フィルターにかからないテストまたはレポートが見つかりました')
