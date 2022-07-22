@@ -125,7 +125,7 @@ def resource_path(relative_path):
 def try_read_data_file():
     try:
         with open(f'{data_path}/{file_name}', encoding='utf-8') as f:
-            global student_id, password, chapter_url, use_sound_notice, use_window_notice, notice_sound_scale
+            global student_id, password, chapter_url, use_sound_notice, use_window_notice, notice_sound_scale, mute_sound
             data = f.read().split(' ')
             print(data)
             student_id = data[0]
@@ -136,15 +136,17 @@ def try_read_data_file():
             if(data[4] == 'True'):
                 use_window_notice = True
             notice_sound_scale = data[5]
+            if(data[6] == 'True'):
+                mute_sound = True
     except Exception:
         return
 
 # tkinterのウィンドウ等からグローバル変数にデータを入力する
 def set_data_from_box(id_txt, password_txt, chapter_url_txt,
                     use_sound_notice_var, use_window_notice_var,
-                    notice_sound_scale_widget, save_data_var):
+                    notice_sound_scale_widget, save_data_var, mute_sound_var):
 
-    global student_id, password, chapter_url, use_sound_notice, use_window_notice, notice_sound_scale, save_data
+    global student_id, password, chapter_url, use_sound_notice, use_window_notice, notice_sound_scale, save_data, mute_sound
 
     student_id = id_txt.get()
     password = password_txt.get()
@@ -153,16 +155,16 @@ def set_data_from_box(id_txt, password_txt, chapter_url_txt,
     use_window_notice = use_window_notice_var.get()
     notice_sound_scale = notice_sound_scale_widget.get()
     save_data = save_data_var.get()
+    mute_sound = mute_sound_var.get()
 
 # 次回からログインを省略するモードだったらテキストファイルにデータを保存する
 def try_write_data_file():
-    global student_id, password, chapter_url, notice_sound_scale
     if save_data:
         os.makedirs(data_path, exist_ok=True)
         with open(f'{data_path}/{file_name}', "w+") as f:
             f.writelines(student_id + ' ' + password + ' '+ chapter_url + ' '+
                         str(use_sound_notice) + ' '+ str(use_window_notice) + ' ' +
-                        str(notice_sound_scale))
+                        str(notice_sound_scale) + ' ' + str(mute_sound))
             f.close()
 
 # ----------------------------------------
@@ -174,7 +176,7 @@ def create_window():
 
     # 画面作成
     tki = tkinter.Tk()
-    tki.geometry('320x220')
+    tki.geometry('320x230')
     tki.title(appname)
 
     # ラベル
@@ -188,7 +190,7 @@ def create_window():
     chapter_url_label.place(x=5, y=90)
 
     notice_box_label = tkinter.Label(text='通知のモード')
-    notice_box_label.place(x=40, y=120)
+    notice_box_label.place(x=35, y=117)
 
     notice_sound_label = tkinter.Label(text='ワッカさんの声量', font=("MS明朝", "8"))
     notice_sound_label.place(x=230, y=28)
@@ -207,22 +209,29 @@ def create_window():
     chapter_url_txt.place(x=100, y=90)
 
     # チェックボックス
-    save_data_var = tkinter.BooleanVar()
-    save_data_box = tkinter.Checkbutton(tki, text='次回からもこの設定を利用する', variable=save_data_var)
-    save_data_box.place(x=40, y=150)
-    save_data_box.select()
-
     use_sound_notice_var = tkinter.BooleanVar()
     use_sound_notice_box = tkinter.Checkbutton(tki, text='ワッカさん', variable=use_sound_notice_var)
-    use_sound_notice_box.place(x=110, y=120)
+    use_sound_notice_box.place(x=110, y=115)
     if(use_sound_notice):
         use_sound_notice_box.select()
 
     use_window_notice_var = tkinter.BooleanVar()
     use_window_notice_box = tkinter.Checkbutton(tki, text='ウィンドウ', variable=use_window_notice_var)
-    use_window_notice_box.place(x=180, y=120)
+    use_window_notice_box.place(x=180, y=115)
     if(use_window_notice):
         use_window_notice_box.select()
+
+    mute_sound_var = tkinter.BooleanVar()
+    mute_sound_box = tkinter.Checkbutton(tki, text='動画の音をミュートする', variable=mute_sound_var)
+    mute_sound_box.place(x=95, y=140)
+    if(mute_sound):
+        mute_sound_box.select()
+
+    save_data_var = tkinter.BooleanVar()
+    save_data_box = tkinter.Checkbutton(tki, text='次回からもこの設定を利用する', variable=save_data_var)
+    save_data_box.place(x=65, y=165)
+    save_data_box.select()
+
 
     # ワッカさんの音量を調整するスケールウィジェット
     notice_sound_scale_widget = tkinter.Scale(tki, orient=tkinter.VERTICAL, from_=0, to=1, resolution=0.1, length = 100)
@@ -234,9 +243,10 @@ def create_window():
                         command=lambda:[set_data_from_box(
                                         id_txt=id_txt, password_txt=password_txt, chapter_url_txt=chapter_url_txt,
                                         use_sound_notice_var=use_sound_notice_var, use_window_notice_var=use_window_notice_var,
-                                        notice_sound_scale_widget=notice_sound_scale_widget, save_data_var=save_data_var),
+                                        notice_sound_scale_widget=notice_sound_scale_widget, save_data_var=save_data_var,
+                                        mute_sound_var=mute_sound_var),
                                         try_write_data_file(), tki.destroy(), open_chrome()])
-    btn.place(x=140, y=180)
+    btn.place(x=140, y=195)
 
     #アイコン
     tki.iconbitmap(resource_path('icon.ico'))
@@ -256,9 +266,10 @@ def open_chrome():
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--ignore-ssl-errors')
 
-    # クロームのオプションで音をミュートする
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument('--mute-audio')
+    if mute_sound:
+        # 音をミュートするモードだったらクロームのオプションで音をミュートする
+        chrome_options.add_argument('--mute-audio')
 
     # オプションをドライバに適用
     driver = webdriver.Chrome(resource_path('chromedriver.exe'), options=options, chrome_options=chrome_options)
@@ -326,8 +337,11 @@ use_sound_notice, use_window_notice = False, False
 # 通知の音量
 notice_sound_scale = 0.1
 
-# データをセーブするかのフラグ
+# データをセーブするかどうかのフラグ
 save_data = True
+
+# 音ミュートするかどうかのフラグ
+mute_sound = False
 
 # 現在再生している動画のタイトル
 current_video_name = ''
