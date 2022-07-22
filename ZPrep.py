@@ -244,6 +244,10 @@ def create_window():
     def enter_key_event(x, id_txt, password_txt, chapter_url_txt,
                     use_sound_notice_var, use_window_notice_var,
                     notice_sound_scale_widget, save_data_var, mute_sound_var, tki):
+        set_data_from_box(id_txt=id_txt, password_txt=password_txt, chapter_url_txt=chapter_url_txt,
+                        use_sound_notice_var=use_sound_notice_var, use_window_notice_var=use_window_notice_var,
+                        notice_sound_scale_widget=notice_sound_scale_widget, save_data_var=save_data_var,
+                        mute_sound_var=mute_sound_var)
         try_write_data_file()
         tki.destroy()
         open_chrome()
