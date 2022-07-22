@@ -18,12 +18,23 @@ from selenium.webdriver.remote import webelement
 
 # 再生できる限り動画を再生し続ける
 def play_video_loop(driver : webelement.WebElement):
-    if(exists_test_or_report == True):
+    global video_and_test_elements_index
+    result = exists_test_or_report()
+    flag = result[0]
+    message = result[1]
+    if(flag == True):
+        # 確認テストの直前で動画の再生が終わっていなかった場合の処理
+        if '視聴済み' not in video_and_test_elements[video_and_test_elements_index - 1].text:
+            print(f'{video_and_test_elements[video_and_test_elements_index - 1].text}'
+                'は確認テスト, レポート直前だが再生が終了していないため再生が終わるまで待機します')
+            try_until_play_video(video_and_test_elements[video_and_test_elements_index])
+            print(f'{video_and_test_elements[video_and_test_elements_index - 1].text}の再生が終わりました')
         # テスト, レポートに到達したら終了時のウィンドウを生成する
-        create_finish_window(driver)
+        create_finish_window(driver, message)
         return
     video = play_new_video(driver)
     time.sleep(get_video_seconds(video))
+    video_and_test_elements_index += 1
     play_video_loop(driver)
 
 # 視聴済みでない動画を再生する
@@ -44,12 +55,20 @@ def play_new_video(driver : webelement.WebElement):
                 print('新しい動画の再生を試みます')
                 try_until_play_video(video)
                 print('新しい動画を再生しました')
+                print(f'indexは{video_and_test_elements_index}')
                 current_video_name = video.text
                 return video
     print('例外 フィルターにかからないテストまたはレポートが見つかりました')
 
 def exists_test_or_report():
-    if(video_and_test_elements[video_and_test_elements_index].text)
+    if video_and_test_elements_index + 2 == len(video_and_test_elements):
+            print('レポートに到達した')
+            return (True, 'レポートに到達しました')
+    if '確認テスト' in video_and_test_elements[video_and_test_elements_index].text:
+        print('確認テストに到達した')
+        return (True, '確認テストに到達しました')
+    else:
+        return (False, '')
 
 # 動画が再生できるようになるまで繰り返す
 def try_until_play_video(video : webelement.WebElement):
@@ -87,6 +106,7 @@ def set_video_test_element_index():
             element.find_element(By.CLASS_NAME, 'is-gate-closed')
             video_and_test_elements_index = i - 1
             print(f'{video_and_test_elements[video_and_test_elements_index].text}\nが現在のエレメント')
+            print(f'indexは{video_and_test_elements_index}')
             return
         except:
             continue
@@ -274,7 +294,7 @@ def open_chrome():
     play_video_loop(driver)
 
 # 確認テスト, レポートに到達した際のウィンドウを生成する
-def create_finish_window(driver: webelement.WebElement):
+def create_finish_window(driver: webelement.WebElement, message : str):
     print('確認テストまたはレポートに到達しました')
     driver.quit()
 
@@ -287,8 +307,7 @@ def create_finish_window(driver: webelement.WebElement):
     webbrowser.open(chapter_url)
 
     if(use_window_notice):
-        messagebox.showinfo('お知らせ', '確認テストまたはレポートに到達しました'
-                        '\nOKボタンでZ予備クンを新たに開きます')
+        messagebox.showinfo('お知らせ', f'{message}\nOKボタンでZ予備クンを新たに開きます')
 
     create_window()
 
