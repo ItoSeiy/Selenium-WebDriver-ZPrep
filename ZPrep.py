@@ -207,6 +207,8 @@ def create_window():
     chapter_url_txt = tkinter.Entry(width=20)
     chapter_url_txt.insert(tkinter.END, chapter_url)
     chapter_url_txt.place(x=100, y=90)
+    # コントロールキーが押されたときにURLのテキストが選択状態になる
+    tki.bind('<Control-Key>', lambda x: chapter_url_txt.focus_set())
 
     # チェックボックス
     use_sound_notice_var = tkinter.BooleanVar()
@@ -238,6 +240,13 @@ def create_window():
     notice_sound_scale_widget.place(x=265, y=45)
     notice_sound_scale_widget.set(notice_sound_scale)
 
+    # エンターキーを押されたときの処理
+    def enter_key_event(x, id_txt, password_txt, chapter_url_txt,
+                    use_sound_notice_var, use_window_notice_var,
+                    notice_sound_scale_widget, save_data_var, mute_sound_var, tki):
+        try_write_data_file()
+        tki.destroy()
+        open_chrome()
     # ボタン
     btn = tkinter.Button(tki, text='始める',
                         command=lambda:[set_data_from_box(
@@ -247,6 +256,10 @@ def create_window():
                                         mute_sound_var=mute_sound_var),
                                         try_write_data_file(), tki.destroy(), open_chrome()])
     btn.place(x=140, y=195)
+    tki.bind('<Return>', lambda x: enter_key_event(x=x ,id_txt=id_txt, password_txt=password_txt, chapter_url_txt=chapter_url_txt,
+                                        use_sound_notice_var=use_sound_notice_var, use_window_notice_var=use_window_notice_var,
+                                        notice_sound_scale_widget=notice_sound_scale_widget, save_data_var=save_data_var,
+                                        mute_sound_var=mute_sound_var, tki=tki))
 
     #アイコン
     tki.iconbitmap(resource_path('icon.ico'))
