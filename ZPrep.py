@@ -323,7 +323,6 @@ def open_chrome():
 # 確認テスト, レポートに到達した際のウィンドウを生成する
 def create_finish_window(driver: webelement.WebElement, message : str):
     print('確認テストまたはレポートに到達しました')
-    driver.quit()
 
     if(use_sound_notice):
         pygame.mixer.init()
@@ -331,6 +330,7 @@ def create_finish_window(driver: webelement.WebElement, message : str):
         pygame.mixer.music.set_volume(notice_sound_scale)
         pygame.mixer.music.play()
 
+    driver.quit()
     webbrowser.open(chapter_url)
 
     if(use_window_notice):
