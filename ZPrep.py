@@ -61,7 +61,7 @@ def play_new_video(driver : webelement.WebElement):
     print('例外 フィルターにかからないテストまたはレポートが見つかりました')
 
 def exists_test_or_report():
-    if video_and_test_elements_index + 2 == len(video_and_test_elements):
+    if video_and_test_elements_index + 1 == len(video_and_test_elements):
             print('レポートに到達した')
             return (True, 'レポートに到達しました')
     if '確認テスト' in video_and_test_elements[video_and_test_elements_index].text:
