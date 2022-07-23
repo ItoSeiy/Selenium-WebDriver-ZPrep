@@ -244,6 +244,10 @@ def create_window():
     def enter_key_event(x, id_txt, password_txt, chapter_url_txt,
                     use_sound_notice_var, use_window_notice_var,
                     notice_sound_scale_widget, save_data_var, mute_sound_var, tki):
+        set_data_from_box(id_txt=id_txt, password_txt=password_txt, chapter_url_txt=chapter_url_txt,
+                        use_sound_notice_var=use_sound_notice_var, use_window_notice_var=use_window_notice_var,
+                        notice_sound_scale_widget=notice_sound_scale_widget, save_data_var=save_data_var,
+                        mute_sound_var=mute_sound_var)
         try_write_data_file()
         tki.destroy()
         open_chrome()
@@ -319,7 +323,6 @@ def open_chrome():
 # 確認テスト, レポートに到達した際のウィンドウを生成する
 def create_finish_window(driver: webelement.WebElement, message : str):
     print('確認テストまたはレポートに到達しました')
-    driver.quit()
 
     if(use_sound_notice):
         pygame.mixer.init()
@@ -327,6 +330,7 @@ def create_finish_window(driver: webelement.WebElement, message : str):
         pygame.mixer.music.set_volume(notice_sound_scale)
         pygame.mixer.music.play()
 
+    driver.quit()
     webbrowser.open(chapter_url)
 
     if(use_window_notice):
