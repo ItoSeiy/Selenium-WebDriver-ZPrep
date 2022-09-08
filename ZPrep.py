@@ -127,7 +127,8 @@ def try_read_data_file():
         with open(f'{data_path}/{file_name}', encoding='utf-8') as f:
             global student_id, password, chapter_url, use_sound_notice, use_window_notice, notice_sound_scale, mute_sound
             data = f.read().split(' ')
-            print(data)
+            print(f'読み込んだ設定ファイルの中身は{data}')
+            print(f'設定ファイルのパス{data_path}/{file_name}')
             student_id = data[0]
             password = data[1]
             chapter_url = data[2]
