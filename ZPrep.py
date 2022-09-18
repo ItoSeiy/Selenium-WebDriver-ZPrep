@@ -1,12 +1,11 @@
 import datetime
 import os
-import sys
 import time
 import tkinter
 import webbrowser
+import Directory
 from tkinter import messagebox
 
-import chromedriver_binary
 import pygame
 from appdirs import *
 from selenium import webdriver
@@ -113,22 +112,14 @@ def set_video_test_element_index():
 
 # --------------------セーブデータ関連--------------------
 
-# パス取得
-def resource_path(relative_path):
-    try:
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.dirname(__file__)
-    return os.path.join(base_path, relative_path)
-
 # データのファイルの読み込みを試みる
 def try_read_data_file():
     try:
-        with open(f'{data_path}/{file_name}', encoding='utf-8') as f:
+        with open(f'{Directory.data_path}/{Directory.file_name}', encoding='utf-8') as f:
             global student_id, password, chapter_url, use_sound_notice, use_window_notice, notice_sound_scale, mute_sound
             data = f.read().split(' ')
             print(f'読み込んだ設定ファイルの中身は{data}')
-            print(f'設定ファイルのパス{data_path}/{file_name}')
+            print(f'設定ファイルのパス{Directory.data_path}/{Directory.file_name}')
             student_id = data[0]
             password = data[1]
             chapter_url = data[2]
@@ -161,8 +152,8 @@ def set_data_from_box(id_txt, password_txt, chapter_url_txt,
 # 次回からログインを省略するモードだったらテキストファイルにデータを保存する
 def try_write_data_file():
     if save_data:
-        os.makedirs(data_path, exist_ok=True)
-        with open(f'{data_path}/{file_name}', "w+") as f:
+        os.makedirs(Directory.data_path, exist_ok=True)
+        with open(f'{Directory.data_path}/{Directory.file_name}', "w+") as f:
             f.writelines(student_id + ' ' + password + ' '+ chapter_url + ' '+
                         str(use_sound_notice) + ' '+ str(use_window_notice) + ' ' +
                         str(notice_sound_scale) + ' ' + str(mute_sound))
@@ -178,7 +169,7 @@ def create_window():
     # 画面作成
     tki = tkinter.Tk()
     tki.geometry('320x230')
-    tki.title(appname)
+    tki.title(Directory.appname)
 
     # ラベル
     id_label = tkinter.Label(text='学籍番号')
@@ -267,7 +258,7 @@ def create_window():
                                         mute_sound_var=mute_sound_var, tki=tki))
 
     #アイコン
-    tki.iconbitmap(resource_path('icon.ico'))
+    tki.iconbitmap(Directory.resource_path('icon.ico'))
 
     # 画面をそのまま表示
     tki.mainloop()
@@ -290,7 +281,7 @@ def open_chrome():
         chrome_options.add_argument('--mute-audio')
 
     # オプションをドライバに適用
-    driver = webdriver.Chrome(resource_path('chromedriver.exe'), options=options, chrome_options=chrome_options)
+    driver = webdriver.Chrome(Directory.resource_path('chromedriver.exe'), options=options, chrome_options=chrome_options)
 
     # N予備校のログイン画面を開く
     driver.get('https://www.nnn.ed.nico/login?next_url=https%3A%2F%2Fwww.nnn.ed.nico%2Fmy_course')
@@ -327,7 +318,7 @@ def create_finish_window(driver: webelement.WebElement, message : str):
 
     if(use_sound_notice):
         pygame.mixer.init()
-        pygame.mixer.music.load(resource_path('Wakka.mp3'))
+        pygame.mixer.music.load(Directory.resource_path('Wakka.mp3'))
         pygame.mixer.music.set_volume(notice_sound_scale)
         pygame.mixer.music.play()
 
@@ -340,11 +331,6 @@ def create_finish_window(driver: webelement.WebElement, message : str):
     create_window()
 
 # ----------変数宣言----------
-
-appname = "Z予備クン"
-appauthor = "IS"
-data_path = user_data_dir(appname, appauthor)
-file_name = 'SaveData.text'
 
 # 学籍番号 パスワード URLの値
 student_id, password, chapter_url = '', '', ''
