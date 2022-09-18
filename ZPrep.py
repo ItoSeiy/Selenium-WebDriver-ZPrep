@@ -6,6 +6,7 @@ import webbrowser
 import Directory
 from tkinter import messagebox
 
+import chromedriver_binary
 import pygame
 from appdirs import *
 from selenium import webdriver
