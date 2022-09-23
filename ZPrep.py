@@ -5,6 +5,7 @@ import tkinter
 import webbrowser
 import Directory
 from tkinter import messagebox
+import tkinter.ttk as ttk
 
 import chromedriver_binary
 import pygame
@@ -203,6 +204,12 @@ def create_window():
     # コントロールキーが押されたときにURLのテキストが選択状態になる
     tki.bind('<Control-Key>', lambda x: chapter_url_txt.focus_set())
 
+    # ログイン方式
+    option = ['N', 'S']  # 選択肢
+    variable = tkinter.StringVar()
+    combo = ttk.Combobox(tki, values = option, textvariable=variable, width=17)
+    combo.place(x=100, y=115)
+
     # チェックボックス
     use_sound_notice_var = tkinter.BooleanVar()
     use_sound_notice_box = tkinter.Checkbutton(tki, text='ワッカさん', variable=use_sound_notice_var)
@@ -227,9 +234,8 @@ def create_window():
     save_data_box.place(x=65, y=165)
     save_data_box.select()
 
-
     # ワッカさんの音量を調整するスケールウィジェット
-    notice_sound_scale_widget = tkinter.Scale(tki, orient=tkinter.VERTICAL, from_=0, to=1, resolution=0.1, length = 100)
+    notice_sound_scale_widget = tkinter.Scale(tki, orient=tkinter.VERTICAL, from_=1, to=0, resolution=0.1, length = 100)
     notice_sound_scale_widget.place(x=265, y=45)
     notice_sound_scale_widget.set(notice_sound_scale)
 
