@@ -15,7 +15,29 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote import webelement
 
-# --------------------動画関連--------------------
+# 学籍番号 パスワード URLの値
+student_id, password, chapter_url = '', '', ''
+
+# 通知の方法に関するフラグ
+use_sound_notice, use_window_notice = False, False
+
+# 通知の音量
+notice_sound_scale = 0.1
+
+# データをセーブするかどうかのフラグ
+save_data = True
+
+# 音ミュートするかどうかのフラグ
+mute_sound = False
+
+# 現在再生している動画のタイトル
+current_video_name = ''
+
+# テストと動画を含めたエレメントのリスト
+video_and_test_elements = []
+
+# 現在のテストと動画を含めたエレメントのリストのIndex
+video_and_test_elements_index = 0
 
 # 再生できる限り動画を再生し続ける
 def play_video_loop(driver : webelement.WebElement):
@@ -170,7 +192,7 @@ def create_window():
 
     # 画面作成
     tki = tkinter.Tk()
-    tki.geometry('320x230')
+    tki.geometry('320x250')
     tki.title(Directory.appname)
 
     # ラベル
@@ -204,11 +226,11 @@ def create_window():
     # コントロールキーが押されたときにURLのテキストが選択状態になる
     tki.bind('<Control-Key>', lambda x: chapter_url_txt.focus_set())
 
-    # ログイン方式
-    option = ['N', 'S']  # 選択肢
-    variable = tkinter.StringVar()
-    combo = ttk.Combobox(tki, values = option, textvariable=variable, width=17)
-    combo.place(x=100, y=115)
+    # # ログイン方式
+    # option = ['N', 'S']  # 選択肢
+    # variable = tkinter.StringVar()
+    # combo = ttk.Combobox(tki, values = option, textvariable=variable, width=17)
+    # combo.place(x=100, y=115)
 
     # チェックボックス
     use_sound_notice_var = tkinter.BooleanVar()
@@ -337,31 +359,5 @@ def create_finish_window(driver: webelement.WebElement, message : str):
 
     create_window()
 
-# ----------変数宣言----------
-
-# 学籍番号 パスワード URLの値
-student_id, password, chapter_url = '', '', ''
-
-# 通知の方法に関するフラグ
-use_sound_notice, use_window_notice = False, False
-
-# 通知の音量
-notice_sound_scale = 0.1
-
-# データをセーブするかどうかのフラグ
-save_data = True
-
-# 音ミュートするかどうかのフラグ
-mute_sound = False
-
-# 現在再生している動画のタイトル
-current_video_name = ''
-
-# テストと動画を含めたエレメントのリスト
-video_and_test_elements = []
-
-# 現在のテストと動画を含めたエレメントのリストのIndex
-video_and_test_elements_index = 0
-
-# ウィンドウを作成 最初の呼び出し
-create_window()
+if __name__ == '__main__':
+    create_window()
