@@ -4,7 +4,7 @@ import tkinter
 from appdirs import *
 
 def delete_save_data():
-    dir = Directory.data_path.replace(Directory.file_name, "").replace(Directory.appname, "")
+    dir = Directory.data_path.replace(Directory.file_name, '').replace(Directory.appname, '')
     shutil.rmtree(dir)
 
 tki = tkinter.Tk()
