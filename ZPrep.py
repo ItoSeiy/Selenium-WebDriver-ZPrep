@@ -2,9 +2,11 @@ import datetime
 import os
 import time
 import tkinter
+from turtle import window_height
 import webbrowser
 import Directory
 from tkinter import messagebox
+import tkinter.ttk as ttk
 
 import chromedriver_binary
 import pygame
@@ -14,7 +16,29 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote import webelement
 
-# --------------------動画関連--------------------
+# 学籍番号 パスワード URL ログイン方式の値
+student_id, password, chapter_url, login_option = '', '', '', ''
+
+# 通知の方法に関するフラグ
+use_sound_notice, use_window_notice = False, False
+
+# 通知の音量
+notice_sound_scale = 0.1
+
+# データをセーブするかどうかのフラグ
+save_data = True
+
+# 音ミュートするかどうかのフラグ
+mute_sound = False
+
+# 現在再生している動画のタイトル
+current_video_name = ''
+
+# テストと動画を含めたエレメントのリスト
+video_and_test_elements = []
+
+# 現在のテストと動画を含めたエレメントのリストのIndex
+video_and_test_elements_index = 0
 
 # 再生できる限り動画を再生し続ける
 def play_video_loop(driver : webelement.WebElement):
@@ -117,33 +141,55 @@ def set_video_test_element_index():
 def try_read_data_file():
     try:
         with open(f'{Directory.data_path}/{Directory.file_name}', encoding='utf-8') as f:
-            global student_id, password, chapter_url, use_sound_notice, use_window_notice, notice_sound_scale, mute_sound
+            global student_id, password, chapter_url, login_option, use_sound_notice, use_window_notice, notice_sound_scale, mute_sound
             data = f.read().split(' ')
             print(f'読み込んだ設定ファイルの中身は{data}')
             print(f'設定ファイルのパス{Directory.data_path}/{Directory.file_name}')
             student_id = data[0]
             password = data[1]
             chapter_url = data[2]
-            if(data[3] == 'True'):
-                use_sound_notice = True
+            login_option = data[3]
+
             if(data[4] == 'True'):
+                use_sound_notice = True
+            elif(data[4] == 'False'):
+                use_sound_notice = False
+            else:
+                raise ValueError
+
+            if(data[5] == 'True'):
                 use_window_notice = True
-            notice_sound_scale = data[5]
-            if(data[6] == 'True'):
+            elif(data[5] == 'False'):
+                use_window_notice = False
+            else:
+                raise ValueError
+
+            notice_sound_scale = data[6]
+
+            if(data[7] == 'True'):
                 mute_sound = True
+            elif(data[7] == 'False'):
+                mute_sound = False
+            else:
+                raise ValueError
     except Exception:
+        student_id, password, chapter_url, login_option = '', '', '', ''
+        use_sound_notice, use_window_notice = False, False
+        notice_sound_scale = 0
+        mute_sound = False
         return
 
 # tkinterのウィンドウ等からグローバル変数にデータを入力する
-def set_data_from_box(id_txt, password_txt, chapter_url_txt,
+def set_data_from_box(id_txt, password_txt, chapter_url_txt, login_option_var,
                     use_sound_notice_var, use_window_notice_var,
                     notice_sound_scale_widget, save_data_var, mute_sound_var):
 
-    global student_id, password, chapter_url, use_sound_notice, use_window_notice, notice_sound_scale, save_data, mute_sound
+    global student_id, password, chapter_url, login_option, use_sound_notice, use_window_notice, notice_sound_scale, save_data, mute_sound
 
     student_id = id_txt.get()
     password = password_txt.get()
     chapter_url = chapter_url_txt.get()
+    login_option = login_option_var.get()
     use_sound_notice = use_sound_notice_var.get()
     use_window_notice = use_window_notice_var.get()
     notice_sound_scale = notice_sound_scale_widget.get()
@@ -155,114 +201,181 @@ def try_write_data_file():
     if save_data:
         os.makedirs(Directory.data_path, exist_ok=True)
         with open(f'{Directory.data_path}/{Directory.file_name}', "w+") as f:
-            f.writelines(student_id + ' ' + password + ' '+ chapter_url + ' '+
+            f.writelines(student_id + ' ' + password + ' '+ chapter_url + ' '+ login_option + ' ' +
                         str(use_sound_notice) + ' '+ str(use_window_notice) + ' ' +
                         str(notice_sound_scale) + ' ' + str(mute_sound))
             f.close()
 
-# ----------------------------------------
+window_geometry = '320x265'
+txt_box_width = 20
 
-# 最初に呼び出される tkinterのウィンドウを描画する
+# 学籍番号
+id_content_y = 30
+id_label_x = 30
+id_txt_x = 100
+
+# パスワード
+password_content_y = 60
+password_label_x = 30
+password_txt_x = 100
+
+# URL
+chapter_url_content_y = 90
+chapter_url_label_x = 5
+chapter_url_txt_x = 100
+
+# ログイン方式
+login_option_list = ['N', 'S']
+login_option_box_width = 17
+login_option_content_y = 120
+login_option_label_x = 20
+login_option_box_x = 100
+
+# 通知
+notice_box_label_x = 35
+notice_box_label_y = 150
+
+sound_notice_box_x = 110
+window_notice_box_x = 180
+notice_box_y = 148
+
+# 音量調整
+sound_widget_x = 265
+sound_widget_y = 45
+sound_widget_from = 1
+sound_widget_to = 0
+sound_widget_resolution = 0.1
+sound_widget_length = 100
+
+sound_label_x = 230
+sound_label_y = 28
+
+# ブラウザのミュート
+mute_sound_box_x = 95
+mute_sound_box_y = 172
+
+# 設定保存
+save_data_box_x = 65
+save_data_box_y = 197
+
+# スタートボタン
+start_btn_x = 140
+start_btn_y = 225
+
+# GUIを描画する
 def create_window():
     # データの読み込みを試みる
     try_read_data_file()
 
     # 画面作成
     tki = tkinter.Tk()
-    tki.geometry('320x230')
+    tki.geometry(window_geometry)
     tki.title(Directory.appname)
 
-    # ラベル
+    # 学籍番号GUI
     id_label = tkinter.Label(text='学籍番号')
-    id_label.place(x=30, y=30)
+    id_label.place(x=id_label_x, y=id_content_y)
 
-    password_label = tkinter.Label(text='パスワード')
-    password_label.place(x=30, y=60)
-
-    chapter_url_label = tkinter.Label(text='チャプターのURL')
-    chapter_url_label.place(x=5, y=90)
-
-    notice_box_label = tkinter.Label(text='通知のモード')
-    notice_box_label.place(x=35, y=117)
-
-    notice_sound_label = tkinter.Label(text='ワッカさんの声量', font=("MS明朝", "8"))
-    notice_sound_label.place(x=230, y=28)
-
-    # テキストボックス
-    id_txt = tkinter.Entry(width=20)
+    id_txt = tkinter.Entry(width=txt_box_width)
     id_txt.insert(tkinter.END, student_id)
-    id_txt.place(x=100, y=30)
+    id_txt.place(x=id_txt_x, y=id_content_y)
 
-    password_txt = tkinter.Entry(width=20, show='*')
+
+    # パスワードGUI
+    password_label = tkinter.Label(text='パスワード')
+    password_label.place(x=password_label_x, y=password_content_y)
+
+    password_txt = tkinter.Entry(width=txt_box_width, show='*')
     password_txt.insert(tkinter.END, password)
-    password_txt.place(x=100, y=60)
+    password_txt.place(x=password_txt_x, y=password_content_y)
 
-    chapter_url_txt = tkinter.Entry(width=20)
+    # URL GUI
+    chapter_url_label = tkinter.Label(text='チャプターのURL')
+    chapter_url_label.place(x=chapter_url_label_x, y=chapter_url_content_y)
+
+    chapter_url_txt = tkinter.Entry(width=txt_box_width)
     chapter_url_txt.insert(tkinter.END, chapter_url)
-    chapter_url_txt.place(x=100, y=90)
+    chapter_url_txt.place(x=chapter_url_txt_x, y=chapter_url_content_y)
     # コントロールキーが押されたときにURLのテキストが選択状態になる
     tki.bind('<Control-Key>', lambda x: chapter_url_txt.focus_set())
 
-    # チェックボックス
+    # ログイン方式
+    login_option_label = tkinter.Label(text='ログイン方式')
+    login_option_label.place(x=login_option_label_x, y=login_option_content_y)
+
+    login_option_var = tkinter.StringVar()
+    login_option_box = ttk.Combobox(tki, values=login_option_list, textvariable=login_option_var, width=login_option_box_width)
+    login_option_box.insert(tkinter.END, login_option)
+    login_option_box.place(x=login_option_box_x, y=login_option_content_y)
+
+    # 通知モードGUI
+    notice_box_label = tkinter.Label(text='通知のモード')
+    notice_box_label.place(x=notice_box_label_x, y=notice_box_label_y)
+
     use_sound_notice_var = tkinter.BooleanVar()
     use_sound_notice_box = tkinter.Checkbutton(tki, text='ワッカさん', variable=use_sound_notice_var)
-    use_sound_notice_box.place(x=110, y=115)
+    use_sound_notice_box.place(x=sound_notice_box_x, y=notice_box_y)
     if(use_sound_notice):
         use_sound_notice_box.select()
 
     use_window_notice_var = tkinter.BooleanVar()
     use_window_notice_box = tkinter.Checkbutton(tki, text='ウィンドウ', variable=use_window_notice_var)
-    use_window_notice_box.place(x=180, y=115)
+    use_window_notice_box.place(x=window_notice_box_x, y=notice_box_y)
     if(use_window_notice):
         use_window_notice_box.select()
 
+    # ミュートGUI
     mute_sound_var = tkinter.BooleanVar()
     mute_sound_box = tkinter.Checkbutton(tki, text='動画の音をミュートする', variable=mute_sound_var)
-    mute_sound_box.place(x=95, y=140)
+    mute_sound_box.place(x=mute_sound_box_x, y=mute_sound_box_y)
     if(mute_sound):
         mute_sound_box.select()
 
-    save_data_var = tkinter.BooleanVar()
-    save_data_box = tkinter.Checkbutton(tki, text='次回からもこの設定を利用する', variable=save_data_var)
-    save_data_box.place(x=65, y=165)
-    save_data_box.select()
+    # 音量GUI
+    notice_sound_label = tkinter.Label(text='ワッカさんの声量', font=("MS明朝", "8"))
+    notice_sound_label.place(x=sound_label_x, y=sound_label_y)
 
-
-    # ワッカさんの音量を調整するスケールウィジェット
-    notice_sound_scale_widget = tkinter.Scale(tki, orient=tkinter.VERTICAL, from_=0, to=1, resolution=0.1, length = 100)
-    notice_sound_scale_widget.place(x=265, y=45)
+    notice_sound_scale_widget = tkinter.Scale(tki, orient=tkinter.VERTICAL, from_=sound_widget_from, to=sound_widget_to,
+                                            resolution=sound_widget_resolution, length =sound_widget_length)
+    notice_sound_scale_widget.place(x=sound_widget_x, y=sound_widget_y)
     notice_sound_scale_widget.set(notice_sound_scale)
 
-    # エンターキーを押されたときの処理
-    def enter_key_event(x, id_txt, password_txt, chapter_url_txt,
-                    use_sound_notice_var, use_window_notice_var,
-                    notice_sound_scale_widget, save_data_var, mute_sound_var, tki):
-        set_data_from_box(id_txt=id_txt, password_txt=password_txt, chapter_url_txt=chapter_url_txt,
-                        use_sound_notice_var=use_sound_notice_var, use_window_notice_var=use_window_notice_var,
-                        notice_sound_scale_widget=notice_sound_scale_widget, save_data_var=save_data_var,
-                        mute_sound_var=mute_sound_var)
-        try_write_data_file()
-        tki.destroy()
-        open_chrome()
-    # ボタン
+    # 設定データ保存GUI
+    save_data_var = tkinter.BooleanVar()
+    save_data_box = tkinter.Checkbutton(tki, text='次回からもこの設定を利用する', variable=save_data_var)
+    save_data_box.place(x=save_data_box_x, y=save_data_box_y)
+    save_data_box.select()
+
+    # スタートボタン
     btn = tkinter.Button(tki, text='始める',
-                        command=lambda:[set_data_from_box(
-                                        id_txt=id_txt, password_txt=password_txt, chapter_url_txt=chapter_url_txt,
+                        command=lambda:on_start_btn(id_txt=id_txt, password_txt=password_txt, chapter_url_txt=chapter_url_txt, login_option_var=login_option_var,
                                         use_sound_notice_var=use_sound_notice_var, use_window_notice_var=use_window_notice_var,
                                         notice_sound_scale_widget=notice_sound_scale_widget, save_data_var=save_data_var,
-                                        mute_sound_var=mute_sound_var),
-                                        try_write_data_file(), tki.destroy(), open_chrome()])
-    btn.place(x=140, y=195)
-    tki.bind('<Return>', lambda x: enter_key_event(x=x ,id_txt=id_txt, password_txt=password_txt, chapter_url_txt=chapter_url_txt,
+                                        mute_sound_var=mute_sound_var, tki=tki))
+    btn.place(x=start_btn_x, y=start_btn_y)
+    # スタートボタンが押された時の処理の登録
+    tki.bind('<Return>', lambda x: on_start_btn(id_txt=id_txt, password_txt=password_txt, chapter_url_txt=chapter_url_txt, login_option_var=login_option_var,
                                         use_sound_notice_var=use_sound_notice_var, use_window_notice_var=use_window_notice_var,
                                         notice_sound_scale_widget=notice_sound_scale_widget, save_data_var=save_data_var,
                                         mute_sound_var=mute_sound_var, tki=tki))
 
-    #アイコン
+    #アイコン設定
     tki.iconbitmap(Directory.resource_path('icon.ico'))
 
-    # 画面をそのまま表示
+    # 描画開始
     tki.mainloop()
+
+def on_start_btn(id_txt, password_txt, chapter_url_txt, login_option_var,
+                use_sound_notice_var, use_window_notice_var,
+                notice_sound_scale_widget, save_data_var, mute_sound_var, tki):
+
+    set_data_from_box(id_txt=id_txt, password_txt=password_txt, chapter_url_txt=chapter_url_txt, login_option_var=login_option_var,
+                    use_sound_notice_var=use_sound_notice_var, use_window_notice_var=use_window_notice_var,
+                    notice_sound_scale_widget=notice_sound_scale_widget, save_data_var=save_data_var,
+                    mute_sound_var=mute_sound_var)
+    try_write_data_file()
+    tki.destroy()
+    open_chrome()
 
 # クロームを開く
 def open_chrome():
@@ -286,7 +399,10 @@ def open_chrome():
 
     # N予備校のログイン画面を開く
     driver.get('https://www.nnn.ed.nico/login?next_url=https%3A%2F%2Fwww.nnn.ed.nico%2Fmy_course')
-    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/div[3]/div[1]/div[1]/div[2]/div[2]/a').click()
+    if login_option == 'N':
+        driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/div[3]/div[1]/div[1]/div[2]/div[1]/a').click()
+    else:
+        driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/div[3]/div[1]/div[1]/div[2]/div[2]/a').click()
 
     time.sleep(1.5)
 
@@ -331,31 +447,5 @@ def create_finish_window(driver: webelement.WebElement, message : str):
 
     create_window()
 
-# ----------変数宣言----------
-
-# 学籍番号 パスワード URLの値
-student_id, password, chapter_url = '', '', ''
-
-# 通知の方法に関するフラグ
-use_sound_notice, use_window_notice = False, False
-
-# 通知の音量
-notice_sound_scale = 0.1
-
-# データをセーブするかどうかのフラグ
-save_data = True
-
-# 音ミュートするかどうかのフラグ
-mute_sound = False
-
-# 現在再生している動画のタイトル
-current_video_name = ''
-
-# テストと動画を含めたエレメントのリスト
-video_and_test_elements = []
-
-# 現在のテストと動画を含めたエレメントのリストのIndex
-video_and_test_elements_index = 0
-
-# ウィンドウを作成 最初の呼び出し
-create_window()
+if __name__ == '__main__':
+    create_window()

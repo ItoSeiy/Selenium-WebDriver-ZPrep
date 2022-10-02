@@ -2,8 +2,8 @@ import sys
 import os
 from appdirs import *
 
-appname = "Z予備クン"
-appauthor = "IS"
+appname = 'Z予備クン'
+appauthor = 'IS'
 data_path = user_data_dir(appname, appauthor)
 file_name = 'SaveData.text'
 
