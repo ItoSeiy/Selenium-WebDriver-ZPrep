@@ -3,11 +3,11 @@ Z予備クン
   PyInstaller main.spec
 
   手打ち
-  PyInstaller main.py --onefile --icon=../icon.ico --add-binary "../chromedriver.exe;./" --add-data "../icon.ico;./" --add-data "../wakka.mp3;./"
+  PyInstaller main.py --onefile --icon=icon.ico --add-binary "./chromedriver.exe;./" --add-data "./icon.ico;./" --add-data "./wakka.mp3;./"
 
 セーブデータ削除するやつ
   Specファイル
   PyInstaller deleteSaveData.spec
 
   手打ち
-  PyInstaller deleteSaveData.py --onefile --icon=../icon.ico --add-data "../icon.ico;./" --noconsole
+  PyInstaller deleteSaveData.py --onefile --icon=icon.ico --add-data "./icon.ico;./" --noconsole
