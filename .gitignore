@@ -5,3 +5,4 @@ dist/
 chromedriver.exe
 *.mp3
 buildCommand.txt
+*.pyc
