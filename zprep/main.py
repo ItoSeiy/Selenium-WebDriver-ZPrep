@@ -4,7 +4,7 @@ import time
 import tkinter
 from turtle import window_height
 import webbrowser
-import Directory
+import directory
 from tkinter import messagebox
 import tkinter.ttk as ttk
 
@@ -140,11 +140,11 @@ def set_video_test_element_index():
 # データのファイルの読み込みを試みる
 def try_read_data_file():
     try:
-        with open(f'{Directory.data_path}/{Directory.file_name}', encoding='utf-8') as f:
+        with open(f'{directory.data_path}/{directory.file_name}', encoding='utf-8') as f:
             global student_id, password, chapter_url, login_option, use_sound_notice, use_window_notice, notice_sound_scale, mute_sound
             data = f.read().split(' ')
             print(f'読み込んだ設定ファイルの中身は{data}')
-            print(f'設定ファイルのパス{Directory.data_path}/{Directory.file_name}')
+            print(f'設定ファイルのパス{directory.data_path}/{directory.file_name}')
             student_id = data[0]
             password = data[1]
             chapter_url = data[2]
@@ -199,8 +199,8 @@ def set_data_from_box(id_txt, password_txt, chapter_url_txt, login_option_var,
 # 次回からログインを省略するモードだったらテキストファイルにデータを保存する
 def try_write_data_file():
     if save_data:
-        os.makedirs(Directory.data_path, exist_ok=True)
-        with open(f'{Directory.data_path}/{Directory.file_name}', "w+") as f:
+        os.makedirs(directory.data_path, exist_ok=True)
+        with open(f'{directory.data_path}/{directory.file_name}', "w+") as f:
             f.writelines(student_id + ' ' + password + ' '+ chapter_url + ' '+ login_option + ' ' +
                         str(use_sound_notice) + ' '+ str(use_window_notice) + ' ' +
                         str(notice_sound_scale) + ' ' + str(mute_sound))
@@ -270,7 +270,7 @@ def create_window():
     # 画面作成
     tki = tkinter.Tk()
     tki.geometry(window_geometry)
-    tki.title(Directory.appname)
+    tki.title(directory.appname)
 
     # 学籍番号GUI
     id_label = tkinter.Label(text='学籍番号')
@@ -360,7 +360,7 @@ def create_window():
                                         mute_sound_var=mute_sound_var, tki=tki))
 
     #アイコン設定
-    tki.iconbitmap(Directory.resource_path('icon.ico'))
+    tki.iconbitmap(directory.resource_path('../icon.ico'))
 
     # 描画開始
     tki.mainloop()
@@ -395,7 +395,7 @@ def open_chrome():
         chrome_options.add_argument('--mute-audio')
 
     # オプションをドライバに適用
-    driver = webdriver.Chrome(Directory.resource_path('chromedriver.exe'), options=options, chrome_options=chrome_options)
+    driver = webdriver.Chrome(directory.resource_path('../chromedriver.exe'), options=options, chrome_options=chrome_options)
 
     # N予備校のログイン画面を開く
     driver.get('https://www.nnn.ed.nico/login?next_url=https%3A%2F%2Fwww.nnn.ed.nico%2Fmy_course')
@@ -435,7 +435,7 @@ def create_finish_window(driver: webelement.WebElement, message : str):
 
     if(use_sound_notice):
         pygame.mixer.init()
-        pygame.mixer.music.load(Directory.resource_path('Wakka.mp3'))
+        pygame.mixer.music.load(directory.resource_path('../Wakka.mp3'))
         pygame.mixer.music.set_volume(notice_sound_scale)
         pygame.mixer.music.play()
 

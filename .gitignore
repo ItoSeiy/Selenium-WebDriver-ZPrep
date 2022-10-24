@@ -4,3 +4,4 @@ build/
 dist/
 chromedriver.exe
 *.mp3
+*.pyc
