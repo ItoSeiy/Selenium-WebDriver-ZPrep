@@ -436,7 +436,7 @@ def create_finish_window(driver: webelement.WebElement, message : str):
 
     if(use_sound_notice):
         pygame.mixer.init()
-        pygame.mixer.music.load(directory.resource_path('../Wakka.mp3'))
+        pygame.mixer.music.load(directory.resource_path('../wakka.mp3'))
         pygame.mixer.music.set_volume(notice_sound_scale)
         pygame.mixer.music.play()
 
