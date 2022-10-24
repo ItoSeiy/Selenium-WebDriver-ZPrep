@@ -1,0 +1,1 @@
+ディレクトリ移動 cd C:\Users\itose\1VSCode\Python\ZPrep\zprep
