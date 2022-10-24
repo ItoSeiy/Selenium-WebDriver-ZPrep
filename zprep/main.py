@@ -7,6 +7,7 @@ import webbrowser
 import directory
 from tkinter import messagebox
 import tkinter.ttk as ttk
+from win11toast import toast
 
 import chromedriver_binary
 import pygame
@@ -439,13 +440,11 @@ def create_finish_window(driver: webelement.WebElement, message : str):
         pygame.mixer.music.set_volume(notice_sound_scale)
         pygame.mixer.music.play()
 
-    driver.quit()
-    webbrowser.open(chapter_url)
-
     if(use_window_notice):
-        messagebox.showinfo('お知らせ', f'{message}\nOKボタンでZ予備クンを新たに開きます')
-
-    create_window()
+        toast(image='https://user-images.githubusercontent.com/89116872/197534669-658f97e5-4714-4e3a-8f05-c0e0910fee1e.jpg',
+            title='確認テストまたはレポートに到達しました', body='Z予備クンβ気持ちよすぎだろ!',
+            app_id=directory.appname, duration='long',
+            on_click=lambda x: [webbrowser.open(chapter_url), driver.quit(), create_window()])
 
 if __name__ == '__main__':
     create_window()
