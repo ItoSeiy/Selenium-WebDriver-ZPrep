@@ -361,7 +361,7 @@ def create_window():
                                         mute_sound_var=mute_sound_var, tki=tki))
 
     #アイコン設定
-    tki.iconbitmap(directory.resource_path('../icon.ico'))
+    tki.iconbitmap(directory.resource_path('icon.ico'))
 
     # 描画開始
     tki.mainloop()
@@ -396,7 +396,7 @@ def open_chrome():
         chrome_options.add_argument('--mute-audio')
 
     # オプションをドライバに適用
-    driver = webdriver.Chrome(directory.resource_path('../chromedriver.exe'), options=options, chrome_options=chrome_options)
+    driver = webdriver.Chrome(directory.resource_path('chromedriver.exe'), options=options, chrome_options=chrome_options)
 
     # N予備校のログイン画面を開く
     driver.get('https://www.nnn.ed.nico/login?next_url=https%3A%2F%2Fwww.nnn.ed.nico%2Fmy_course')
@@ -436,7 +436,7 @@ def create_finish_window(driver: webelement.WebElement, message : str):
 
     if(use_sound_notice):
         pygame.mixer.init()
-        pygame.mixer.music.load(directory.resource_path('../wakka.mp3'))
+        pygame.mixer.music.load(directory.resource_path('wakka.mp3'))
         pygame.mixer.music.set_volume(notice_sound_scale)
         pygame.mixer.music.play()
 

@@ -22,6 +22,6 @@ no_btn = tkinter.Button(tki, text= "いいえ", height=1, width=5,
                         command=lambda: tki.destroy())
 no_btn.place(x=150, y=80)
 
-tki.iconbitmap(directory.resource_path('../icon.ico'))
+tki.iconbitmap(directory.resource_path('icon.ico'))
 
 tki.mainloop()
