@@ -8,8 +8,8 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[('./chromedriver.exe', './')],
-    datas=[('./icon.ico', './'), ('./wakka.mp3', './')],
-    hiddenimports=[],
+    datas=[('./icon.ico', './'), ('./wakka.mp3', './'), ('./wakka01.ico', './'), ('./wakka02.ico', './')],
+    hiddenimports=['plyer.platforms.win.notification'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -41,5 +41,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['icon.ico'],
+    icon='icon.ico',
 )
