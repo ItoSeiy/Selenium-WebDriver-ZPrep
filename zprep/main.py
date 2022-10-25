@@ -7,10 +7,12 @@ import webbrowser
 import directory
 from tkinter import messagebox
 import tkinter.ttk as ttk
-from win11toast import toast
+from plyer import notification
+from mutagen.mp3 import MP3
 
 import chromedriver_binary
 import pygame
+import random
 from appdirs import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -40,6 +42,9 @@ video_and_test_elements = []
 
 # 現在のテストと動画を含めたエレメントのリストのIndex
 video_and_test_elements_index = 0
+
+# トースト通知に使用するアイコンのパスの配列
+toast_icon_array = [directory.resource_path('wakka01.ico'), directory.resource_path('wakka02.ico')]
 
 # 再生できる限り動画を再生し続ける
 def play_video_loop(driver : webelement.WebElement):
@@ -441,10 +446,13 @@ def create_finish_window(driver: webelement.WebElement, message : str):
         pygame.mixer.music.play()
 
     if(use_window_notice):
-        toast(image='https://user-images.githubusercontent.com/89116872/197534669-658f97e5-4714-4e3a-8f05-c0e0910fee1e.jpg',
-            title='確認テストまたはレポートに到達しました', body='Z予備クンβ気持ちよすぎだろ!',
-            app_id=directory.appname, duration='long',
-            on_click=lambda x: [webbrowser.open(chapter_url), driver.quit(), create_window()])
+        notification.notify(
+        title = '確認テストまたはレポートに到達しました',
+        message = 'Z予備クンβ版でも気持ち良すぎだろ!',
+        app_name = directory.appname,
+        app_icon = toast_icon_array[random.randint(0, len(toast_icon_array) - 1)],
+        timeout = int(MP3(directory.resource_path('wakka.mp3')).info.length)
+        )
 
 if __name__ == '__main__':
     create_window()
