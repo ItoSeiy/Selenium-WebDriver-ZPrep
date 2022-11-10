@@ -380,7 +380,6 @@ def on_start_btn(id_txt, password_txt, chapter_url_txt, login_option_var,
                     notice_sound_scale_widget=notice_sound_scale_widget, save_data_var=save_data_var,
                     mute_sound_var=mute_sound_var)
     try_write_data_file()
-    tki.destroy()
     open_chrome()
 
 # クロームを開く
