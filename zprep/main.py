@@ -420,6 +420,17 @@ def open_chrome():
 
     # 指定された教材を開く
     driver.get(chapter_url)
+
+    try:
+        driver.find_element(By.XPATH, '/html/body/div[1]/div[3]/div[2]/div[3]/div[1]/div/div/form/div[1]/div/div/div[1]/label/input').click()
+        driver.find_element(By.XPATH, '/html/body/div[1]/div[3]/div[2]/div[3]/div[1]/div/div/form/div[1]/div/div/div[2]/label/input').click()
+        driver.find_element(By.XPATH, '/html/body/div[1]/div[3]/div[2]/div[3]/div[1]/div/div/form/div[1]/div/div/div[3]/label/input').click()
+        driver.find_element(By.XPATH, '/html/body/div[1]/div[3]/div[2]/div[3]/div[1]/div/div/form/div[1]/div/div/div[4]/label/input').click()
+        driver.find_element(By.XPATH, '/html/body/div[1]/div[3]/div[2]/div[3]/div[1]/div/div/form/div[1]/div/div/div[5]/label/input').click()
+        driver.find_element(By.XPATH, '/html/body/div[1]/div[3]/div[2]/div[3]/div[1]/div/div/form/div[2]/button').click()
+    except:
+        None
+
     # 必修教材のみを表示する
     try:
         driver.find_element(By.XPATH, '//*[@id="sections-contents"]/div[1]/div[1]/div[2]/div/div[1]').click()
