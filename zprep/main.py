@@ -459,7 +459,7 @@ def create_finish_window(driver: webelement.WebElement, message : str):
     if(use_window_notice):
         notification.notify(
         title = '確認テストまたはレポートに到達しました',
-        message = 'Z予備クンβ版でも気持ち良すぎだろ!',
+        message = 'Z予備クン帰ってきて気持ち良すぎだろ!',
         app_name = directory.appname,
         app_icon = toast_icon_array[random.randint(0, len(toast_icon_array) - 1)],
         timeout = int(MP3(directory.resource_path('wakka.mp3')).info.length)
