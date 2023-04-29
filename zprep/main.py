@@ -406,9 +406,9 @@ def open_chrome():
     # N予備校のログイン画面を開く
     driver.get('https://www.nnn.ed.nico/login?next_url=https%3A%2F%2Fwww.nnn.ed.nico%2Fmy_course')
     if login_option == 'N':
-        driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/div[3]/div[1]/div[1]/div[2]/div[1]/a').click()
+        driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div[1]/div[1]/div/div[1]/a').click()
     else:
-        driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/div[3]/div[1]/div[1]/div[2]/div[2]/a').click()
+        driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div[1]/div[1]/div/div[2]/a').click()
 
     time.sleep(1.5)
 
