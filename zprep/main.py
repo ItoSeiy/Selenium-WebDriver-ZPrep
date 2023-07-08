@@ -10,7 +10,6 @@ import tkinter.ttk as ttk
 from plyer import notification
 from mutagen.mp3 import MP3
 
-import chromedriver_binary
 import pygame
 import random
 from appdirs import *
@@ -18,6 +17,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote import webelement
+from selenium.webdriver.chrome.service import Service
 
 # 学籍番号 パスワード URL ログイン方式の値
 student_id, password, chapter_url, login_option = '', '', '', ''
@@ -395,13 +395,14 @@ def open_chrome():
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--ignore-ssl-errors')
 
-    chrome_options = webdriver.ChromeOptions()
     if mute_sound:
         # 音をミュートするモードだったらクロームのオプションで音をミュートする
-        chrome_options.add_argument('--mute-audio')
+        options.add_argument('--mute-audio')
+
+    service = Service(executable_path=directory.resource_path('chromedriver.exe'))
 
     # オプションをドライバに適用
-    driver = webdriver.Chrome(directory.resource_path('chromedriver.exe'), options=options, chrome_options=chrome_options)
+    driver = webdriver.Chrome(options=options, service=service)
 
     # N予備校のログイン画面を開く
     driver.get('https://www.nnn.ed.nico/login?next_url=https%3A%2F%2Fwww.nnn.ed.nico%2Fmy_course')

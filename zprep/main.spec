@@ -7,7 +7,7 @@ block_cipher = None
 a = Analysis(
     ['main.py'],
     pathex=[],
-    binaries=[('./chromedriver.exe', './')],
+    binaries=[],
     datas=[('./icon.ico', './'), ('./wakka.mp3', './'), ('./wakka01.ico', './'), ('./wakka02.ico', './')],
     hiddenimports=['plyer.platforms.win.notification'],
     hookspath=[],
