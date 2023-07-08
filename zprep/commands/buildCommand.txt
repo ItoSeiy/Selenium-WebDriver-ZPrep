@@ -3,7 +3,7 @@ Z予備クン
   PyInstaller main.spec
 
   手打ち
-  PyInstaller main.py --onefile --icon=icon.ico --add-binary "./chromedriver.exe;./" --add-data "./icon.ico;./" --add-data "./wakka.mp3;./" --add-data "./wakka01.ico;./" --add-data "./wakka02.ico;./" --hidden-import plyer.platforms.win.notification
+  PyInstaller main.py --icon=icon.ico --add-data "./icon.icns:./" --add-data "./wakka.mp3:./" --add-data "./wakka01.icns:./" --add-data "./wakka02.icns:./" --hidden-import plyer.platforms.macosx.notification
 
 セーブデータ削除するやつ
   Specファイル

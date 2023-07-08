@@ -18,6 +18,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote import webelement
 from selenium.webdriver.chrome.service import Service
+import pyperclip
+from selenium.webdriver.chromium.webdriver import ChromiumDriver
 
 # 学籍番号 パスワード URL ログイン方式の値
 student_id, password, chapter_url, login_option = '', '', '', ''
@@ -44,10 +46,10 @@ video_and_test_elements = []
 video_and_test_elements_index = 0
 
 # トースト通知に使用するアイコンのパスの配列
-toast_icon_array = [directory.resource_path('wakka01.ico'), directory.resource_path('wakka02.ico')]
+toast_icon_array = [directory.resource_path('wakka01.icns'), directory.resource_path('wakka02.icns')]
 
 # 再生できる限り動画を再生し続ける
-def play_video_loop(driver : webelement.WebElement):
+def play_video_loop(driver : ChromiumDriver):
     global video_and_test_elements_index
     result = exists_test_or_report()
     flag = result[0]
@@ -366,7 +368,7 @@ def create_window():
                                         mute_sound_var=mute_sound_var, tki=tki))
 
     #アイコン設定
-    tki.iconbitmap(directory.resource_path('icon.ico'))
+    tki.iconbitmap(directory.resource_path('icon.icns'))
 
     # 描画開始
     tki.mainloop()
@@ -443,13 +445,14 @@ def open_chrome():
     # テストと動画を含めたエレメントのリストを登録する
     set_video_test_elements(driver)
     set_video_test_element_index()
-
     # 動画をテストやレポートまで再生し続ける
     play_video_loop(driver)
 
 # 確認テスト, レポートに到達した際のウィンドウを生成する
-def create_finish_window(driver: webelement.WebElement, message : str):
+def create_finish_window(driver: ChromiumDriver, message : str):
     print('確認テストまたはレポートに到達しました')
+
+    music_length = int(MP3(directory.resource_path('wakka.mp3')).info.length)
 
     if(use_sound_notice):
         pygame.mixer.init()
@@ -459,12 +462,16 @@ def create_finish_window(driver: webelement.WebElement, message : str):
 
     if(use_window_notice):
         notification.notify(
-        title = '確認テストまたはレポートに到達しました',
-        message = 'Z予備クン帰ってきて気持ち良すぎだろ!',
+        title = message,
+        message = 'Z予備クン',
         app_name = directory.appname,
         app_icon = toast_icon_array[random.randint(0, len(toast_icon_array) - 1)],
-        timeout = int(MP3(directory.resource_path('wakka.mp3')).info.length)
+        timeout = music_length
         )
+
+    pyperclip.copy(chapter_url)
+    time.sleep(music_length)
+    driver.close()
 
 if __name__ == '__main__':
     create_window()
