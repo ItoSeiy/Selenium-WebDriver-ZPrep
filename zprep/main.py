@@ -402,6 +402,8 @@ def open_chrome():
 
     # オプションをドライバに適用
     driver = webdriver.Chrome(directory.resource_path('chromedriver.exe'), options=options, chrome_options=chrome_options)
+    driver.set_window_size(1500, 1000)
+    driver.set_window_position(550, 300)
 
     # N予備校のログイン画面を開く
     driver.get('https://www.nnn.ed.nico/login?next_url=https%3A%2F%2Fwww.nnn.ed.nico%2Fmy_course')
