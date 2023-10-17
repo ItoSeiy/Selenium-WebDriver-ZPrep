@@ -19,6 +19,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote import webelement
 
+import constant
+
 # 学籍番号 パスワード URL ログイン方式の値
 student_id, password, chapter_url, login_option = '', '', '', ''
 
@@ -70,24 +72,23 @@ def play_video_loop(driver : webelement.WebElement):
 # 視聴済みでない動画を再生する
 def play_new_video(driver : webelement.WebElement):
     global current_video_name
-    videos = driver.find_elements(By.CLASS_NAME, 'movie')
-    for i, video in enumerate(videos):
-        if '視聴済み' not in video.text.strip():
-            print(f'{video.text}が再生候補として見つかりました')
+    for i, video_element in enumerate(video_and_test_elements):
+        if '視聴済み' not in video_element.text.strip():
+            print(f'{video_element.text}が再生候補として見つかりました')
             print(f'indexは{video_and_test_elements_index}')
-            if video.text == current_video_name:
-                next_video = videos[i + 1]
-                print(f'現在再生している動画を再生しようとしたので次の\n{next_video.text}を再生できるまで待機します')
-                try_until_play_video(next_video)
-                print(f'{video.text}を再生できるようになったので再生します')
-                current_video_name = next_video.text
-                return next_video
+            if video_element.text == current_video_name:
+                next_video_element = video_and_test_elements[i + 1]
+                print(f'現在再生している動画を再生しようとしたので次の\n{next_video_element.text}を再生できるまで待機します')
+                try_until_play_video(video_element)
+                print(f'{video_element.text}を再生できるようになったので再生します')
+                current_video_name = next_video_element.text
+                return next_video_element
             else:
                 print('新しい動画の再生を試みます')
-                try_until_play_video(video)
+                try_until_play_video(driver.find_element(By.XPATH, constant.OPEND_VIDEO_ELEMENT_CLASS_NAME))
                 print('新しい動画を再生しました')
-                current_video_name = video.text
-                return video
+                current_video_name = video_element.text
+                return video_element
     print('例外 フィルターにかからないテストまたはレポートが見つかりました')
 
 def exists_test_or_report():
@@ -104,7 +105,7 @@ def exists_test_or_report():
 def try_until_play_video(video : webelement.WebElement):
     video.click()
     try:
-        video.find_element(By.CLASS_NAME, 'is-selected')
+        video.find_element(By.CLASS_NAME, constant.OPENING_VIDEO_ELEMENT_CLASS_NAME)
     except:
         time.sleep(1)
         try_until_play_video(video)
@@ -127,13 +128,14 @@ def send_text(XPATH : str, text : str, driver : webelement.WebElement):
 # テストと動画を含めたエレメントのリストを登録する
 def set_video_test_elements(driver : webelement.WebElement):
     global video_and_test_elements
-    video_and_test_elements = driver.find_element(By.XPATH, '//*[@id="sections-contents"]/div[1]/div[1]/ul').find_elements(By.TAG_NAME, 'li')
+    video_and_test_elements = driver.find_element(By.XPATH, constant.VIDEO_ELEMENTS_CONTAINER).find_elements(By.TAG_NAME, constant.VIDEO_ELEMENT_TAG)
 
-def set_video_test_element_index():
+def set_video_test_element_index(driver : webelement.WebElement):
     global video_and_test_elements_index, video_and_test_elements
     for i, element in enumerate(video_and_test_elements):
         try:
-            element.find_element(By.CLASS_NAME, 'is-gate-closed')
+            # 閉ざされている動画を取得する
+            element.find_element(By.CLASS_NAME, constant.CLOSED_VIDEO_ELEMENT_CLASS_NAME)
             video_and_test_elements_index = i - 1
             print(f'{video_and_test_elements[video_and_test_elements_index].text}\nが現在のエレメント')
             print(f'indexは{video_and_test_elements_index}')
@@ -423,27 +425,28 @@ def open_chrome():
     # 指定された教材を開く
     driver.get(chapter_url)
 
+    # 同意
     try:
-        driver.find_element(By.XPATH, '/html/body/div[1]/div[3]/div[2]/div[3]/div[1]/div/div/form/div[1]/div/div/div[1]/label/input').click()
-        driver.find_element(By.XPATH, '/html/body/div[1]/div[3]/div[2]/div[3]/div[1]/div/div/form/div[1]/div/div/div[2]/label/input').click()
-        driver.find_element(By.XPATH, '/html/body/div[1]/div[3]/div[2]/div[3]/div[1]/div/div/form/div[1]/div/div/div[3]/label/input').click()
-        driver.find_element(By.XPATH, '/html/body/div[1]/div[3]/div[2]/div[3]/div[1]/div/div/form/div[1]/div/div/div[4]/label/input').click()
-        driver.find_element(By.XPATH, '/html/body/div[1]/div[3]/div[2]/div[3]/div[1]/div/div/form/div[1]/div/div/div[5]/label/input').click()
-        driver.find_element(By.XPATH, '/html/body/div[1]/div[3]/div[2]/div[3]/div[1]/div/div/form/div[2]/button').click()
+        driver.find_element(By.XPATH, constant.AGREEMENT_ELEMENTS[0]).click()
+        driver.find_element(By.XPATH, constant.AGREEMENT_ELEMENTS[1]).click()
+        driver.find_element(By.XPATH, constant.AGREEMENT_ELEMENTS[2]).click()
+        driver.find_element(By.XPATH, constant.AGREEMENT_ELEMENTS[3]).click()
+        driver.find_element(By.XPATH, constant.AGREEMENT_ELEMENTS[4]).click()
+        driver.find_element(By.XPATH, constant.AGREEMENT_BUTTON).click()
     except:
         None
 
     # 必修教材のみを表示する
     try:
-        driver.find_element(By.XPATH, '//*[@id="sections-contents"]/div[1]/div[1]/div[2]/div/div[1]').click()
+        driver.find_element(By.XPATH, constant.ONLY_REQUIRED_SUBJECT_BUTTON).click()
     except:
         None
 
-    time.sleep(1.5)
+    time.sleep(10)
 
-    # テストと動画を含めたエレメントのリストを登録する
+    #テストと動画を含めたエレメントのリストを登録する
     set_video_test_elements(driver)
-    set_video_test_element_index()
+    set_video_test_element_index(driver)
 
     # 動画をテストやレポートまで再生し続ける
     play_video_loop(driver)
