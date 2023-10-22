@@ -1,21 +1,30 @@
 from __future__ import annotations
-'''
+
+"""
 セーブデータ関連を扱うモジュール
-'''
+"""
 
 import json
 import const
 import os
 
-class SaveData:
-    def __init__(self, student_id : str, password : str, login_kind : const.Save.LoginKind,
-                use_sound_notice : bool, use_window_notice : bool, notice_sound_scale : float, mute_video : bool):
 
+class SaveData:
+    def __init__(
+        self,
+        student_id: str,
+        password: str,
+        login_kind: const.Save.LoginKind,
+        use_sound_notice: bool,
+        use_window_notice: bool,
+        notice_sound_scale: float,
+        mute_video: bool,
+    ):
         self.login_info = {}
         self.login_info = {
             const.Save.SaveDataJsonKey.String.STUDENT_ID: student_id,
             const.Save.SaveDataJsonKey.String.PASSWORD: password,
-            const.Save.SaveDataJsonKey.String.LOGIN_KIND: login_kind.value
+            const.Save.SaveDataJsonKey.String.LOGIN_KIND: login_kind.value,
         }
 
         self.option = {}
@@ -23,31 +32,47 @@ class SaveData:
             const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE: use_sound_notice,
             const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE: use_window_notice,
             const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE: notice_sound_scale,
-            const.Save.SaveDataJsonKey.String.MUTE_VIDEO: mute_video
+            const.Save.SaveDataJsonKey.String.MUTE_VIDEO: mute_video,
         }
 
     @staticmethod
-    def get_from_json(path : str, file_name : str, encoding = 'utf-8') -> SaveData:
+    def get_from_json(path: str, file_name: str, encoding="utf-8") -> SaveData:
         """
         セーブデータをJsonから取得する
         """
 
         # ファイルを開き、jsonファイルを読み込む
-        with open(f'{path}/{file_name}', encoding=encoding) as file:
+        with open(f"{path}/{file_name}", encoding=encoding) as file:
             # JSON文字列をSaveDataに変換(デコード)する
             dec = json.loads(file.read())
             return SaveData(
-                dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][const.Save.SaveDataJsonKey.String.STUDENT_ID],
-                dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][const.Save.SaveDataJsonKey.String.PASSWORD],
-                const.Save.LoginKind(dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][const.Save.SaveDataJsonKey.String.LOGIN_KIND]),
-                dec[const.Save.SaveDataJsonKey.Object.OPTION][const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE],
-                dec[const.Save.SaveDataJsonKey.Object.OPTION][const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE],
-                dec[const.Save.SaveDataJsonKey.Object.OPTION][const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE],
-                dec[const.Save.SaveDataJsonKey.Object.OPTION][const.Save.SaveDataJsonKey.String.MUTE_VIDEO]
+                dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][
+                    const.Save.SaveDataJsonKey.String.STUDENT_ID
+                ],
+                dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][
+                    const.Save.SaveDataJsonKey.String.PASSWORD
+                ],
+                const.Save.LoginKind(
+                    dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][
+                        const.Save.SaveDataJsonKey.String.LOGIN_KIND
+                    ]
+                ),
+                dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                    const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE
+                ],
+                dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                    const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE
+                ],
+                dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                    const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE
+                ],
+                dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                    const.Save.SaveDataJsonKey.String.MUTE_VIDEO
+                ],
             )
 
     @staticmethod
-    def save_to_json(save_data : SaveData, path : str, file_name : str):
+    def save_to_json(save_data: SaveData, path: str, file_name: str):
         """
         セーブデータをJsonに保存する
         """
@@ -72,7 +97,7 @@ class SaveData:
         b	バイナリモード
         """
         # ファイルを開き、jsonファイルを書き込み、保存する
-        with open(f'{path}/{file_name}', 'w+') as file:
+        with open(f"{path}/{file_name}", "w+") as file:
             file.write(json_str)
             file.close()
 
@@ -95,7 +120,9 @@ class SaveData:
         """
         ログイン種別を取得する
         """
-        return const.Save.LoginKind(self.login_info[const.Save.SaveDataJsonKey.String.LOGIN_KIND])
+        return const.Save.LoginKind(
+            self.login_info[const.Save.SaveDataJsonKey.String.LOGIN_KIND]
+        )
 
     @property
     def use_sound_notice(self) -> bool:

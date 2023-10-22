@@ -5,13 +5,16 @@
 from appdirs import user_data_dir
 from enum import Enum
 
+
 class App:
-    NAME = 'Z予備クン'
-    AUTHOR = 'IS'
+    NAME = "Z予備クン"
+    AUTHOR = "IS"
+
 
 class Path:
-    FILE_NAME = 'save_data.json'
+    FILE_NAME = "save_data.json"
     DATA_PATH = user_data_dir(App.NAME, App.AUTHOR)
+
 
 class Save:
     class SaveDataJsonKey:
@@ -23,8 +26,9 @@ class Save:
             """
             JsonのObjectのKeyを定義したクラス
             """
-            LOGIN_INFO = 'login_info'
-            OPTION = 'option'
+
+            LOGIN_INFO = "login_info"
+            OPTION = "option"
 
         class String:
             """
@@ -32,19 +36,20 @@ class Save:
             """
 
             # login_infoオブジェクトのKey
-            STUDENT_ID = 'student_id'
-            PASSWORD = 'password'
-            LOGIN_KIND = 'login_kind'
+            STUDENT_ID = "student_id"
+            PASSWORD = "password"
+            LOGIN_KIND = "login_kind"
 
             # optionオブジェクトのKey
-            USE_SOUND_NOTICE = 'use_sound_notice'
-            USE_WINDOW_NOTICE = 'use_window_notice'
-            NOTICE_SOUND_SCALE = 'notice_sound_scale'
-            MUTE_VIDEO = 'mute_video'
+            USE_SOUND_NOTICE = "use_sound_notice"
+            USE_WINDOW_NOTICE = "use_window_notice"
+            NOTICE_SOUND_SCALE = "notice_sound_scale"
+            MUTE_VIDEO = "mute_video"
 
     class LoginKind(Enum):
         """
         ログイン種別を定義したクラス
         """
-        N = 'N'
-        S = 'S'
+
+        N = "N"
+        S = "S"

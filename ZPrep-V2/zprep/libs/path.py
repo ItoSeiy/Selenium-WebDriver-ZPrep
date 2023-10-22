@@ -4,6 +4,7 @@
 import sys
 import os
 
+
 def get_resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
