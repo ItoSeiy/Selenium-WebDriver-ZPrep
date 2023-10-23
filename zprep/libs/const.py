@@ -11,9 +11,7 @@ from appdirs import user_data_dir
 
 
 class App:
-    """
-    アプリケーションの情報を定義したクラス
-    """
+    """アプリケーションの情報を定義したクラス"""
 
     NAME = "Z予備クン"
     AUTHOR = "IS"
@@ -21,9 +19,7 @@ class App:
 
 class Gui:
     class Window:
-        """
-        GUIに関する定数を定義したクラス
-        """
+        """GUIに関する定数を定義したクラス"""
 
         # 基本サイズ
         WINDOW_GEOMETRY = "320x265"
@@ -128,22 +124,16 @@ class Save:
         DATA_PATH = user_data_dir(App.NAME, App.AUTHOR)
 
     class SaveDataJsonKey:
-        """
-        セーブデータのJsonのKeyを定義したクラス
-        """
+        """セーブデータのJsonのKeyを定義したクラス"""
 
         class Object:
-            """
-            JsonのObjectのKeyを定義したクラス
-            """
+            """JsonのObjectのKeyを定義したクラス"""
 
             LOGIN_INFO = "login_info"
             OPTION = "option"
 
         class String:
-            """
-            JsonのStringのKeyを定義したクラス
-            """
+            """JsonのStringのKeyを定義したクラス"""
 
             # login_infoオブジェクトのKey
             STUDENT_ID = "student_id"
@@ -158,9 +148,7 @@ class Save:
             MUTE_VIDEO = "mute_video"
 
     class LoginKind(Enum):
-        """
-        ログイン種別を定義したクラス
-        """
+        """ログイン種別を定義したクラス"""
 
         N = "N"
         S = "S"
@@ -170,9 +158,47 @@ class Selenium:
     CHROME_DRIVER_NAME = "chromedriver.exe"
 
     class Option:
-        """
-        Selenium関連のオプションを定義したクラス
-        """
+        """Selenium関連のオプションを定義したクラス"""
 
         # ミュート
         MUTE_AUDIO = "--mute-audio"
+
+    class Url:
+        """URLを定義したクラス"""
+
+        LOGIN = "https://www.nnn.ed.nico/login?next_url=https%3A%2F%2Fwww.nnn.ed.nico%2Fmy_course"
+
+    class XPath:
+        """XPathを定義したクラス"""
+
+        def LOGIN_KIND_BUTTON(kind: Save.LoginKind) -> str:
+            """ログイン種別のボタンのXPathを返す関数"""
+
+            if kind == Save.LoginKind.N:
+                return (
+                    '//*[@id="root"]/div/div/div[2]/div[2]/div[1]/div[1]/div/div[1]/a'
+                )
+            else:
+                return (
+                    '//*[@id="root"]/div/div/div[2]/div[2]/div[1]/div[1]/div/div[2]/a'
+                )
+
+        # 学籍番号入力欄
+        STUDENT_ID_FIELD = '//*[@id="oauth_identifier_loginId"]'
+        # パスワード入力欄
+        PASSWORD_FIELD = '//*[@id="oauth_identifier_password"]'
+        # ログインボタン
+        LOGIN_BUTTON = '//*[@id="oauth_identifier_"]'
+
+        # 同意チェック項目
+        AGREEMENT_ELEMENTS = [
+            "/html/body/div[5]/div/div/div/form/div[1]/div/div/div[1]/input",
+            "/html/body/div[5]/div/div/div/form/div[1]/div/div/div[2]/input",
+            "/html/body/div[5]/div/div/div/form/div[1]/div/div/div[3]/input",
+            "/html/body/div[5]/div/div/div/form/div[1]/div/div/div[4]/input",
+            "/html/body/div[5]/div/div/div/form/div[1]/div/div/div[5]/input",
+        ]
+        AGREEMENT_BUTTON = "/html/body/div[5]/div/div/div/form/div[2]/button"
+
+        # 必修教材のみボタン
+        ONLY_REQUIRED_SUBJECT_BUTTON = "/html/body/div[1]/div/div[2]/div[2]/main/div[2]/div[1]/div[1]/div[2]/div/div[2]/button[1]"
