@@ -23,23 +23,23 @@ def create(save_data: save.SaveData, on_start_button_click):
     # 学籍番号ラベルの作成
     student_id_label = tkinter.Label(text=const.Gui.Window.STUDENT_ID_LABEL_TEXT)
     student_id_label.place(
-        x=const.Gui.Window.STUDENT_ID_LABEL_POS_X,
-        y=const.Gui.Window.STUDENT_ID_CONTENTS_POS_Y,
+        x=const.Gui.Window.STUDENT_ID_LABEL_POS[0],
+        y=const.Gui.Window.STUDENT_ID_LABEL_POS[1],
     )
 
     # 学籍番号入力UIの作成
     student_id_entry = tkinter.Entry(width=const.Gui.Window.ENTRY_WIDTH)
     student_id_entry.place(
-        x=const.Gui.Window.STUDENT_ID_ENTRY_POS_X,
-        y=const.Gui.Window.STUDENT_ID_CONTENTS_POS_Y,
+        x=const.Gui.Window.STUDENT_ID_ENTRY_POS[0],
+        y=const.Gui.Window.STUDENT_ID_ENTRY_POS[1],
     )
     student_id_entry.insert(tkinter.END, save_data.student_id)
 
     # パスワードラベルの作成
     password_label = tkinter.Label(text=const.Gui.Window.PASSWORD_LABEL_TEXT)
     password_label.place(
-        x=const.Gui.Window.PASSWORD_LABEL_POS_X,
-        y=const.Gui.Window.PASSWORD_CONTENTS_POS_Y,
+        x=const.Gui.Window.PASSWORD_LABEL_POS[0],
+        y=const.Gui.Window.PASSWORD_LABEL_POS[1],
     )
 
     # パスワード入力UIの作成
@@ -48,23 +48,23 @@ def create(save_data: save.SaveData, on_start_button_click):
         show=const.Gui.Window.PASSWORD_ENTRY_SHOW_TEXT,
     )
     password_entry.place(
-        x=const.Gui.Window.PASSWORD_ENTRY_POS_X,
-        y=const.Gui.Window.PASSWORD_CONTENTS_POS_Y,
+        x=const.Gui.Window.PASSWORD_ENTRY_POS[0],
+        y=const.Gui.Window.PASSWORD_ENTRY_POS[1],
     )
     password_entry.insert(tkinter.END, save_data.password)
 
     # チャプターURLラベルの作成
     chapter_url_label = tkinter.Label(text=const.Gui.Window.CHAPTER_URL_LABEL_TEXT)
     chapter_url_label.place(
-        x=const.Gui.Window.CHAPTER_URL_LABEL_POS_X,
-        y=const.Gui.Window.CHAPTER_URL_CONTENTS_POS_Y,
+        x=const.Gui.Window.CHAPTER_URL_LABEL_POS[0],
+        y=const.Gui.Window.CHAPTER_URL_LABEL_POS[1],
     )
 
     # チャプターURL入力UIの作成
     chapter_url_entry = tkinter.Entry(width=const.Gui.Window.ENTRY_WIDTH)
     chapter_url_entry.place(
-        x=const.Gui.Window.CHAPTER_URL_ENTRY_POS_X,
-        y=const.Gui.Window.CHAPTER_URL_CONTENTS_POS_Y,
+        x=const.Gui.Window.CHAPTER_URL_ENTRY_POS[0],
+        y=const.Gui.Window.CHAPTER_URL_ENTRY_POS[1],
     )
     chapter_url_entry.insert(tkinter.END, save_data.chapter_url)
     # コントロールキーが押されたときにURLの入力UIを選択する
@@ -76,8 +76,8 @@ def create(save_data: save.SaveData, on_start_button_click):
     # ログイン種別のラベルの作成
     login_kind_label = tkinter.Label(text=const.Gui.Window.LOGIN_KIND_LABEL_TEXT)
     login_kind_label.place(
-        x=const.Gui.Window.LOGIN_KIND_LABEL_POS_X,
-        y=const.Gui.Window.LOGIN_KIND_CONTENTS_POS_Y,
+        x=const.Gui.Window.LOGIN_KIND_LABEL_POS[0],
+        y=const.Gui.Window.LOGIN_KIND_LABEL_POS[1],
     )
 
     # ログイン種別の選択ドロップダウンUIの作成
@@ -87,16 +87,16 @@ def create(save_data: save.SaveData, on_start_button_click):
         width=const.Gui.Window.LOGIN_KIND_COMBOBOX_WIDTH,
     )
     login_kind_combobox.place(
-        x=const.Gui.Window.LOGIN_KIND_COMBOBOX_POS_X,
-        y=const.Gui.Window.LOGIN_KIND_CONTENTS_POS_Y,
+        x=const.Gui.Window.LOGIN_KIND_COMBOBOX_POS[0],
+        y=const.Gui.Window.LOGIN_KIND_COMBOBOX_POS[1],
     )
     login_kind_combobox.insert(tkinter.END, save_data.login_kind.value)
 
     # 通知モードのラベルの作成
     notice_mode_label = tkinter.Label(text=const.Gui.Window.NOTICE_MODE_LABEL_TEXT)
     notice_mode_label.place(
-        x=const.Gui.Window.NOTICE_MODE_CONTENTS_POS_X,
-        y=const.Gui.Window.NOTICE_MODE_CONTENTS_POS_Y,
+        x=const.Gui.Window.NOTICE_MODE_LABEL_POS[0],
+        y=const.Gui.Window.NOTICE_MODE_LABEL_POS[1],
     )
 
     # 通知モード(サウンド)のBooleanVarの作成
@@ -108,8 +108,8 @@ def create(save_data: save.SaveData, on_start_button_click):
         variable=notice_mode_sound_boolean_var,
     )
     notice_mode_sound_checkbutton.place(
-        x=const.Gui.Window.NOTICE_MODE_SOUND_CHECKBOX_POS_X,
-        y=const.Gui.Window.NOTICE_MODE_CONTENTS_POS_Y,
+        x=const.Gui.Window.NOTICE_MODE_SOUND_CHECKBOX_POS[0],
+        y=const.Gui.Window.NOTICE_MODE_SOUND_CHECKBOX_POS[1],
     )
     if save_data.use_sound_notice == True:
         notice_mode_sound_checkbutton.select()
@@ -123,8 +123,8 @@ def create(save_data: save.SaveData, on_start_button_click):
         variable=notice_mode_window_boolean_var,
     )
     notice_mode_window_checkbutton.place(
-        x=const.Gui.Window.NOTICE_MODE_WINDOW_CHECKBOX_POS_X,
-        y=const.Gui.Window.NOTICE_MODE_CONTENTS_POS_Y,
+        x=const.Gui.Window.NOTICE_MODE_WINDOW_CHECKBOX_POS[0],
+        y=const.Gui.Window.NOTICE_MODE_WINDOW_CHECKBOX_POS[1],
     )
     if save_data.use_window_notice == True:
         notice_mode_window_checkbutton.select()
@@ -136,19 +136,33 @@ def create(save_data: save.SaveData, on_start_button_click):
         tki, text=const.Gui.Window.MUTE_VIDEO_LABEL_TEXT, variable=mute_mode_boolean_var
     )
     mute_mode_checkbutton.place(
-        x=const.Gui.Window.MUTE_VIDEO_CHECKBOX_POS_X,
-        y=const.Gui.Window.MUTE_VIDEO_CHECKBOX_POS_Y,
+        x=const.Gui.Window.MUTE_VIDEO_CHECKBOX_POS[0],
+        y=const.Gui.Window.MUTE_VIDEO_CHECKBOX_POS[1],
     )
     if save_data.mute_video == True:
         mute_mode_checkbutton.select()
+
+    # 設定保存のチェックボックスのBooleanVarの作成
+    save_setting_boolean_var = tkinter.BooleanVar()
+    # 設定保存のチェックボックスの作成
+    save_setting_checkbutton = tkinter.Checkbutton(
+        tki,
+        text=const.Gui.Window.SAVE_SETTING_LABEL_TEXT,
+        variable=save_setting_boolean_var,
+    )
+    save_setting_checkbutton.place(
+        x=const.Gui.Window.SAVE_SETTING_BUTTON_POS[0],
+        y=const.Gui.Window.SAVE_SETTING_BUTTON_POS[1],
+    )
+    save_setting_checkbutton.select()
 
     # 通知音量のラベルの作成
     notice_sound_scale_label = tkinter.Label(
         text=const.Gui.Window.NOTICE_SOUND_SCALE_LABEL_TEXT
     )
     notice_sound_scale_label.place(
-        x=const.Gui.Window.NOTICE_SOUND_SCALE_LABEL_POS_X,
-        y=const.Gui.Window.NOTICE_SOUND_SCALE_LABEL_POS_Y,
+        x=const.Gui.Window.NOTICE_SOUND_SCALE_LABEL_POS[0],
+        y=const.Gui.Window.NOTICE_SOUND_SCALE_LABEL_POS[1],
     )
 
     # 通知音量のスライダーの作成
@@ -161,24 +175,10 @@ def create(save_data: save.SaveData, on_start_button_click):
         length=const.Gui.Window.NOTICE_SOUND_SCALE_SLIDER_LENGTH,
     )
     notice_sound_scale_slider.place(
-        x=const.Gui.Window.NOTICE_SOUND_SCALE_SLIDER_POS_X,
-        y=const.Gui.Window.NOTICE_SOUND_SCALE_SLIDER_POS_Y,
+        x=const.Gui.Window.NOTICE_SOUND_SCALE_SLIDER_POS[0],
+        y=const.Gui.Window.NOTICE_SOUND_SCALE_SLIDER_POS[1],
     )
     notice_sound_scale_slider.set(save_data.notice_sound_scale)
-
-    # 設定保存のチェックボックスのBooleanVarの作成
-    save_setting_boolean_var = tkinter.BooleanVar()
-    # 設定保存のチェックボックスの作成
-    save_setting_checkbutton = tkinter.Checkbutton(
-        tki,
-        text=const.Gui.Window.SAVE_SETTING_LABEL_TEXT,
-        variable=save_setting_boolean_var,
-    )
-    save_setting_checkbutton.place(
-        x=const.Gui.Window.SAVE_SETTING_BUTTON_POS_X,
-        y=const.Gui.Window.SAVE_SETTING_BUTTON_POS_Y,
-    )
-    save_setting_checkbutton.select()
 
     # 開始ボタンの作成
     start_button = tkinter.Button(
@@ -201,8 +201,8 @@ def create(save_data: save.SaveData, on_start_button_click):
         ),
     )
     start_button.place(
-        x=const.Gui.Window.START_BUTTON_POS_X,
-        y=const.Gui.Window.START_BUTTON_POS_Y,
+        x=const.Gui.Window.START_BUTTON_POS[0],
+        y=const.Gui.Window.START_BUTTON_POS[1],
     )
 
     # 開始ボタンが実行されるキーを設定する
