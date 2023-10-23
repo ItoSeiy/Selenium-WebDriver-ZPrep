@@ -17,6 +17,7 @@ def create(save_data: save.SaveData, on_start_button_click):
     """
     # ベースUIの作成
     tki = tkinter.Tk()
+    tki.title(const.App.NAME)
     tki.geometry(const.Gui.Window.WINDOW_GEOMETRY)
 
     # 学籍番号ラベルの作成
@@ -72,13 +73,6 @@ def create(save_data: save.SaveData, on_start_button_click):
         lambda x: chapter_url_entry.focus_set(),
     )
 
-    # ログイン種別ラベルの作成
-    login_type_label = tkinter.Label(text=const.Gui.Window.LOGIN_KIND_LABEL_TEXT)
-    login_type_label.place(
-        x=const.Gui.Window.CHAPTER_URL_LABEL_POS_X,
-        y=const.Gui.Window.CHAPTER_URL_CONTENTS_POS_Y,
-    )
-
     # ログイン種別のラベルの作成
     login_kind_label = tkinter.Label(text=const.Gui.Window.LOGIN_KIND_LABEL_TEXT)
     login_kind_label.place(
@@ -96,7 +90,7 @@ def create(save_data: save.SaveData, on_start_button_click):
         x=const.Gui.Window.LOGIN_KIND_COMBOBOX_POS_X,
         y=const.Gui.Window.LOGIN_KIND_CONTENTS_POS_Y,
     )
-    login_kind_combobox.insert(tkinter.END, save_data.login_kind)
+    login_kind_combobox.insert(tkinter.END, save_data.login_kind.value)
 
     # 通知モードのラベルの作成
     notice_mode_label = tkinter.Label(text=const.Gui.Window.NOTICE_MODE_LABEL_TEXT)

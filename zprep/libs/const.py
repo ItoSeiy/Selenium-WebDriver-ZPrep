@@ -41,18 +41,18 @@ class Gui:
         # 学席番号ラベル、入力UIのY座標
         STUDENT_ID_CONTENTS_POS_Y = 30
         # 学籍番号ラベルのX座標
-        STUDENT_ID_LABEL_POS_X = 100
+        STUDENT_ID_LABEL_POS_X = 30
         # 学籍番号入力UIのX座標
-        STUDENT_ID_ENTRY_POS_X = 30
+        STUDENT_ID_ENTRY_POS_X = 100
 
         # パスワードラベルのテキスト
         PASSWORD_LABEL_TEXT = "パスワード"
         # パスワードラベル、入力UIのY座標
         PASSWORD_CONTENTS_POS_Y = 60
         # パスワードラベルのX座標
-        PASSWORD_LABEL_POS_X = 100
+        PASSWORD_LABEL_POS_X = 30
         # パスワード入力UIのX座標
-        PASSWORD_ENTRY_POS_X = 30
+        PASSWORD_ENTRY_POS_X = 100
         # パスワードが入力されている時に表示する文字
         PASSWORD_ENTRY_SHOW_TEXT = "*"
 
