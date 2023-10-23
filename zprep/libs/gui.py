@@ -6,7 +6,7 @@ import os
 import tkinter
 import tkinter.ttk as ttk
 
-from . import const, save
+from . import const, path, save
 
 
 def create(save_data: save.SaveData, on_start_button_click):
@@ -68,7 +68,7 @@ def create(save_data: save.SaveData, on_start_button_click):
     )
     chapter_url_entry.insert(tkinter.END, save_data.chapter_url)
     # コントロールキーが押されたときにURLの入力UIを選択する
-    chapter_url_entry.bind(
+    tki.bind(
         const.Gui.Window.CHAPTER_URL_ENTRY_SELECT_KEY,
         lambda x: chapter_url_entry.focus_set(),
     )
@@ -190,7 +190,7 @@ def create(save_data: save.SaveData, on_start_button_click):
             new_save_data=save.SaveData(
                 student_id=student_id_entry.get(),
                 password=password_entry.get(),
-                login_kind=const.Save.LoginKind.S,
+                login_kind=const.Save.LoginKind(login_kind_combobox.get()),
                 chapter_url=chapter_url_entry.get(),
                 use_sound_notice=notice_mode_sound_boolean_var.get(),
                 use_window_notice=notice_mode_window_boolean_var.get(),
@@ -225,12 +225,8 @@ def create(save_data: save.SaveData, on_start_button_click):
         ),
     )
 
-    # gui.py ファイルのディレクトリを取得
-    gui_directory = os.path.dirname(__file__)
-    # アイコン画像の相対パス
-    icon_relative_path = os.path.join("..", "..", "assets", "icon", "icon.ico")
-    # アイコン画像の絶対パスを生成
-    icon_file_path = os.path.normpath(os.path.join(gui_directory, icon_relative_path))
+    # アイコン画像の絶対パスを取得
+    icon_file_path = path.get_assets_path("icon/icon.ico")
     # アイコン設定
     tki.iconbitmap(icon_file_path)
 
