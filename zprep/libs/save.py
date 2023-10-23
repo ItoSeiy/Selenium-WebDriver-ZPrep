@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import os
 
-import const
+from . import const
 
 
 class SaveData:

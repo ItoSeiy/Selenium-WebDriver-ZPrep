@@ -6,8 +6,7 @@ import os
 import tkinter
 import tkinter.ttk as ttk
 
-import const
-import save
+from . import const, save
 
 
 def create(save_data: save.SaveData, on_start_button_click):
@@ -90,7 +89,7 @@ def create(save_data: save.SaveData, on_start_button_click):
     # ログイン種別の選択ドロップダウンUIの作成
     login_kind_combobox = ttk.Combobox(
         tki,
-        values=const.Gui.Window.LOGIN_KIND_VALUES,
+        values=const.Gui.Window.LOGIN_KIND_LIST,
         width=const.Gui.Window.LOGIN_KIND_COMBOBOX_WIDTH,
     )
     login_kind_combobox.place(
@@ -106,36 +105,47 @@ def create(save_data: save.SaveData, on_start_button_click):
         y=const.Gui.Window.NOTICE_MODE_CONTENTS_POS_Y,
     )
 
-    # 通知モードのチェックボックスの作成
+    # 通知モード(サウンド)のBooleanVarの作成
+    notice_mode_sound_boolean_var = tkinter.BooleanVar()
+    # 通知モード(サウンド)のチェックボックスの作成
     notice_mode_sound_checkbutton = tkinter.Checkbutton(
-        tki, text=const.Gui.Window.NOTICE_MODE_SOUND_CHECKBOX_TEXT
+        tki,
+        text=const.Gui.Window.NOTICE_MODE_SOUND_CHECKBOX_TEXT,
+        variable=notice_mode_sound_boolean_var,
     )
     notice_mode_sound_checkbutton.place(
         x=const.Gui.Window.NOTICE_MODE_SOUND_CHECKBOX_POS_X,
         y=const.Gui.Window.NOTICE_MODE_CONTENTS_POS_Y,
     )
-    if save_data.notice_mode_sound == True:
+    if save_data.use_sound_notice == True:
         notice_mode_sound_checkbutton.select()
 
+    # 通知モード(ウィンドウ)のBooleanVarの作成
+    notice_mode_window_boolean_var = tkinter.BooleanVar()
+    # 通知モード(ウィンドウ)のチェックボックスの作成
     notice_mode_window_checkbutton = tkinter.Checkbutton(
-        tki, text=const.Gui.Window.NOTICE_MODE_WINDOW_CHECKBOX_TEXT
+        tki,
+        text=const.Gui.Window.NOTICE_MODE_WINDOW_CHECKBOX_TEXT,
+        variable=notice_mode_window_boolean_var,
     )
     notice_mode_window_checkbutton.place(
         x=const.Gui.Window.NOTICE_MODE_WINDOW_CHECKBOX_POS_X,
         y=const.Gui.Window.NOTICE_MODE_CONTENTS_POS_Y,
     )
-    if save_data.notice_mode_window == True:
+    if save_data.use_window_notice == True:
         notice_mode_window_checkbutton.select()
 
+    # ミュートモードのBooleanVarの作成
+    mute_mode_boolean_var = tkinter.BooleanVar()
     # ミュートモードのチェックボックスの作成
     mute_mode_checkbutton = tkinter.Checkbutton(
-        tki, text=const.Gui.Window.MUTE_VIDEO_LABEL_TEXT
+        tki, text=const.Gui.Window.MUTE_VIDEO_LABEL_TEXT, variable=mute_mode_boolean_var
     )
     mute_mode_checkbutton.place(
         x=const.Gui.Window.MUTE_VIDEO_CHECKBOX_POS_X,
         y=const.Gui.Window.MUTE_VIDEO_CHECKBOX_POS_Y,
     )
-    if save_data.mute_mode == True:
+    if save_data.mute_video == True:
         mute_mode_checkbutton.select()
 
     # 通知音量のラベルの作成
@@ -162,9 +172,13 @@ def create(save_data: save.SaveData, on_start_button_click):
     )
     notice_sound_scale_slider.set(save_data.notice_sound_scale)
 
+    # 設定保存のチェックボックスのBooleanVarの作成
+    save_setting_boolean_var = tkinter.BooleanVar()
     # 設定保存のチェックボックスの作成
     save_setting_checkbutton = tkinter.Checkbutton(
-        tki, text=const.Gui.Window.SAVE_SETTING_LABEL_TEXT
+        tki,
+        text=const.Gui.Window.SAVE_SETTING_LABEL_TEXT,
+        variable=save_setting_boolean_var,
     )
     save_setting_checkbutton.place(
         x=const.Gui.Window.SAVE_SETTING_BUTTON_POS_X,
@@ -172,28 +186,25 @@ def create(save_data: save.SaveData, on_start_button_click):
     )
     save_setting_checkbutton.select()
 
-    # 開始ボタン押下時の処理を作成する
-    on_start = _on_start_button_click(
-        tki=tki,
-        save_setting=save_setting_checkbutton.getboolean(),
-        new_save_data=save.SaveData(
-            student_id=student_id_entry.get(),
-            password=password_entry.get(),
-            login_kind=const.Save.LoginKind(login_kind_combobox.get()),
-            chapter_url=chapter_url_entry.get(),
-            notice_mode_sound=notice_mode_sound_checkbutton.getboolean(),
-            notice_mode_window=notice_mode_window_checkbutton.getboolean(),
-            notice_sound_scale=notice_sound_scale_slider.get(),
-            mute_mode=mute_mode_checkbutton.getboolean(),
-        ),
-        on_start_button_click=on_start_button_click,
-    )
-
     # 開始ボタンの作成
     start_button = tkinter.Button(
         tki,
         text=const.Gui.Window.START_BUTTON_TEXT,
-        command=lambda: on_start,
+        command=lambda: _on_start_button_click(
+            tki=tki,
+            save_setting=save_setting_boolean_var.get(),
+            new_save_data=save.SaveData(
+                student_id=student_id_entry.get(),
+                password=password_entry.get(),
+                login_kind=const.Save.LoginKind.S,
+                chapter_url=chapter_url_entry.get(),
+                use_sound_notice=notice_mode_sound_boolean_var.get(),
+                use_window_notice=notice_mode_window_boolean_var.get(),
+                mute_video=mute_mode_boolean_var.get(),
+                notice_sound_scale=notice_sound_scale_slider.get(),
+            ),
+            on_start_button_click=on_start_button_click,
+        ),
     )
     start_button.place(
         x=const.Gui.Window.START_BUTTON_POS_X,
@@ -201,7 +212,24 @@ def create(save_data: save.SaveData, on_start_button_click):
     )
 
     # 開始ボタンが実行されるキーを設定する
-    tki.bind(const.Gui.Window.START_BUTTON_EXECUTE_KEY, lambda x: on_start)
+    tki.bind(
+        const.Gui.Window.START_BUTTON_EXECUTE_KEY,
+        lambda x: _on_start_button_click(
+            tki=tki,
+            save_setting=save_setting_boolean_var.get(),
+            new_save_data=save.SaveData(
+                student_id=student_id_entry.get(),
+                password=password_entry.get(),
+                login_kind=const.Save.LoginKind.S,
+                chapter_url=chapter_url_entry.get(),
+                use_sound_notice=notice_mode_sound_boolean_var.get(),
+                use_window_notice=notice_mode_window_boolean_var.get(),
+                mute_video=mute_mode_boolean_var.get(),
+                notice_sound_scale=notice_sound_scale_slider.get(),
+            ),
+            on_start_button_click=on_start_button_click,
+        ),
+    )
 
     # gui.py ファイルのディレクトリを取得
     gui_directory = os.path.dirname(__file__)
