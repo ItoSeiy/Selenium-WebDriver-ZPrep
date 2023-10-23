@@ -1,24 +1,26 @@
 from __future__ import annotations
 
-"""
-セーブデータ関連を扱うモジュール
-"""
+"""セーブデータ関連を扱うモジュール"""
 
 import json
-import const
 import os
+
+import const
 
 
 class SaveData:
+    """セーブデータクラス"""
+
     def __init__(
         self,
         student_id: str,
         password: str,
         login_kind: const.Save.LoginKind,
+        chapter_url: str,
         use_sound_notice: bool,
         use_window_notice: bool,
-        notice_sound_scale: float,
         mute_video: bool,
+        notice_sound_scale: float,
     ):
         self.login_info = {}
         self.login_info = {
@@ -29,16 +31,24 @@ class SaveData:
 
         self.option = {}
         self.option = {
+            const.Save.SaveDataJsonKey.String.CHATPER_URL: chapter_url,
             const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE: use_sound_notice,
             const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE: use_window_notice,
-            const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE: notice_sound_scale,
             const.Save.SaveDataJsonKey.String.MUTE_VIDEO: mute_video,
+            const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE: notice_sound_scale,
         }
 
     @staticmethod
     def get_from_json(path: str, file_name: str, encoding="utf-8") -> SaveData:
-        """
-        セーブデータをJsonから取得する
+        """セーブデータをJSONから取得する
+
+        Args:
+            path (str): 保存先のJSONのパス
+            file_name (str): 保存先のJSONのファイル名
+            encoding (str, optional): 開く際の文字コード. デフォルト : "utf-8".
+
+        Returns:
+            SaveData: セーブデータ
         """
 
         # ファイルを開き、jsonファイルを読み込む
@@ -58,24 +68,25 @@ class SaveData:
                     ]
                 ),
                 dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                    const.Save.SaveDataJsonKey.String.CHATPER_URL
+                ],
+                dec[const.Save.SaveDataJsonKey.Object.OPTION][
                     const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE
                 ],
                 dec[const.Save.SaveDataJsonKey.Object.OPTION][
                     const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE
                 ],
                 dec[const.Save.SaveDataJsonKey.Object.OPTION][
-                    const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE
+                    const.Save.SaveDataJsonKey.String.MUTE_VIDEO
                 ],
                 dec[const.Save.SaveDataJsonKey.Object.OPTION][
-                    const.Save.SaveDataJsonKey.String.MUTE_VIDEO
+                    const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE
                 ],
             )
 
     @staticmethod
     def save_to_json(save_data: SaveData, path: str, file_name: str):
-        """
-        セーブデータをJsonに保存する
-        """
+        """セーブデータをJsonに保存する"""
 
         # ディレクトリが存在しない場合は作成する
         # exist_ok=Trueとすると既に存在しているディレクトリを指定してもエラーにならない
@@ -103,51 +114,42 @@ class SaveData:
 
     @property
     def student_id(self) -> str:
-        """
-        学籍番号を取得する
-        """
+        """学籍番号を取得する"""
         return self.login_info[const.Save.SaveDataJsonKey.String.STUDENT_ID]
 
     @property
     def password(self) -> str:
-        """
-        パスワードを取得する
-        """
+        """パスワードを取得する"""
         return self.login_info[const.Save.SaveDataJsonKey.String.PASSWORD]
 
     @property
     def login_kind(self) -> const.Save.LoginKind:
-        """
-        ログイン種別を取得する
-        """
+        """ログイン種別を取得する"""
         return const.Save.LoginKind(
             self.login_info[const.Save.SaveDataJsonKey.String.LOGIN_KIND]
         )
 
     @property
+    def chapter_url(self) -> str:
+        """チャプターURLを取得する"""
+        return self.option[const.Save.SaveDataJsonKey.String.CHATPER_URL]
+
+    @property
     def use_sound_notice(self) -> bool:
-        """
-        音声通知を使用するかを取得する
-        """
+        """音声通知を使用するかを取得する"""
         return self.option[const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE]
 
     @property
     def use_window_notice(self) -> bool:
-        """
-        ウィンドウ通知を使用するかを取得する
-        """
+        """ウィンドウ通知を使用するかを取得する"""
         return self.option[const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE]
 
     @property
-    def notice_sound_scale(self) -> float:
-        """
-        通知音量を取得する
-        """
-        return self.option[const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE]
+    def mute_video(self) -> bool:
+        """動画をミュートするかを取得する"""
+        return self.option[const.Save.SaveDataJsonKey.String.MUTE_VIDEO]
 
     @property
-    def mute_video(self) -> bool:
-        """
-        動画をミュートするかを取得する
-        """
-        return self.option[const.Save.SaveDataJsonKey.String.MUTE_VIDEO]
+    def notice_sound_scale(self) -> float:
+        """通知音量を取得する"""
+        return self.option[const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE]
