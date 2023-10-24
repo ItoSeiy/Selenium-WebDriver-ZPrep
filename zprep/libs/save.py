@@ -15,12 +15,12 @@ class SaveData:
         self,
         student_id: str,
         password: str,
-        login_kind: const.Save.LoginKind,
         chapter_url: str,
-        use_sound_notice: bool,
-        use_window_notice: bool,
-        mute_video: bool,
-        notice_sound_scale: float,
+        login_kind: const.Save.LoginKind = const.Save.LoginKind.S,
+        use_sound_notice: bool = True,
+        use_window_notice: bool = True,
+        mute_video: bool = True,
+        notice_sound_scale: float = True,
     ):
         self.login_info = {}
         self.login_info = {
@@ -51,38 +51,42 @@ class SaveData:
             SaveData: セーブデータ
         """
 
-        # ファイルを開き、jsonファイルを読み込む
-        with open(f"{path}/{file_name}", encoding=encoding) as file:
-            # JSON文字列をSaveDataに変換(デコード)する
-            dec = json.loads(file.read())
-            return SaveData(
-                dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][
-                    const.Save.SaveDataJsonKey.String.STUDENT_ID
-                ],
-                dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][
-                    const.Save.SaveDataJsonKey.String.PASSWORD
-                ],
-                const.Save.LoginKind(
-                    dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][
-                        const.Save.SaveDataJsonKey.String.LOGIN_KIND
-                    ]
-                ),
-                dec[const.Save.SaveDataJsonKey.Object.OPTION][
-                    const.Save.SaveDataJsonKey.String.CHATPER_URL
-                ],
-                dec[const.Save.SaveDataJsonKey.Object.OPTION][
-                    const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE
-                ],
-                dec[const.Save.SaveDataJsonKey.Object.OPTION][
-                    const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE
-                ],
-                dec[const.Save.SaveDataJsonKey.Object.OPTION][
-                    const.Save.SaveDataJsonKey.String.MUTE_VIDEO
-                ],
-                dec[const.Save.SaveDataJsonKey.Object.OPTION][
-                    const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE
-                ],
-            )
+        try:
+            # ファイルを開き、jsonファイルを読み込む
+            with open(f"{path}/{file_name}", encoding=encoding) as file:
+                # JSON文字列をSaveDataに変換(デコード)する
+                dec = json.loads(file.read())
+                return SaveData(
+                    student_id=dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][
+                        const.Save.SaveDataJsonKey.String.STUDENT_ID
+                    ],
+                    password=dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][
+                        const.Save.SaveDataJsonKey.String.PASSWORD
+                    ],
+                    login_kind=const.Save.LoginKind(
+                        dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][
+                            const.Save.SaveDataJsonKey.String.LOGIN_KIND
+                        ]
+                    ),
+                    chapter_url=dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                        const.Save.SaveDataJsonKey.String.CHATPER_URL
+                    ],
+                    use_sound_notice=dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                        const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE
+                    ],
+                    use_window_notice=dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                        const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE
+                    ],
+                    mute_video=[const.Save.SaveDataJsonKey.Object.OPTION][
+                        const.Save.SaveDataJsonKey.String.MUTE_VIDEO
+                    ],
+                    notice_sound_scale=dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                        const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE
+                    ],
+                )
+        except FileNotFoundError:
+            # ファイルが存在しない場合は空なセーブデータを返す
+            return SaveData()
 
     @staticmethod
     def save_to_json(save_data: SaveData, path: str, file_name: str):
