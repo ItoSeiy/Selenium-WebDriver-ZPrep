@@ -165,7 +165,9 @@ class Save:
 
 
 class Selenium:
-    CHROME_DRIVER_NAME = "chromedriver.exe"
+    class Message:
+        ALL_VIDEO_PLAYED_MESSAGE = "全ての動画を視聴しました"
+        ALREADY_REACHED_TEST = "既にテストに到達しています"
 
     class Option:
         """Selenium関連のオプション、設定を定義したクラス"""
@@ -179,9 +181,6 @@ class Selenium:
         LOG_LEVEL_3 = "--log-level=3"
         # 長文ログの無効化
         EXPERMENTAL_OPTION = ("excludeSwitches", ["enable-logging"])
-
-        # タイムアウトまでの時間
-        TIME_TO_WAIT = 8
 
         # ウィンドウサイズ
         WINDOW_SIZE = (1500, 1000)
@@ -262,3 +261,8 @@ class Selenium:
 
         # 動画時間の取得に必要なエレメントまでのパス
         VIDEO_LENGTH_PATH = ("div", "div", ".sc-aXZVg.iuHQbN")
+
+        # エレメントが未開放かどうかの判定に必要なエレメントまでのパス
+        UNOPENED_ELEMENT_PATH = (
+            ".sc-aXZVg.sc-gEvEer.hYNtMZ.fteAEG.sc-1otp79h-0.sc-35qwhb-0.evJGlU.hoWVG"
+        )

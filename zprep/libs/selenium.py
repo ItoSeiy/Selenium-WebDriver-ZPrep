@@ -1,11 +1,12 @@
 import logging
+from time import sleep
+from typing import Callable, Union
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote import webelement
-from typing import Callable
 
 from . import const, path, save
 
@@ -16,7 +17,7 @@ class Selenium:
     def _set_driver_implicitly_wait_default(self, driver: webdriver.Chrome):
         """指定した要素が見つかるまでの待ち時間をデフォルトにする関数"""
 
-        driver.implicitly_wait(const.Selenium.Option.TIME_TO_WAIT)
+        driver.implicitly_wait(self._save_data.time_out)
 
     def _set_driver_implicitly_wait_zero(self, driver: webdriver.Chrome):
         """指定した要素が見つかるまでの待ち時間を0にする関数"""
@@ -38,18 +39,25 @@ class Selenium:
             By.XPATH, const.Selenium.XPath.SUBJECT_ELEMENTS_CONTAINER
         ).find_elements(By.TAG_NAME, const.Selenium.Tag.LIST_ITEM)
 
-    def _get_first_not_played_element(
+    def _get_first_not_played_video_element(
         self,
         driver: webdriver.Chrome,
         elements: list[webelement.WebElement],
-    ) -> webelement.WebElement:
-        """'視聴済み'のテキストが存在しない最初のエレメントを取得する関数"""
+    ) -> Union[webelement.WebElement, str]:
+        """未再生の動画のエレメントを取得する関数
 
-        # 指定した要素が見つかるまでの待ち時間を設定
-        # 見つからなかったらすぐにエラーを出したいので0に設定
-        self._set_driver_implicitly_wait_zero(driver=driver)
+        Returns:
+            Union[webelement.WebElement, str]: 未再生の動画のエレメントが取得できなかった場合はエラーメッセージが返される
+        """
 
-        for element in elements:
+        for i, element in enumerate(elements):
+            if self._is_test_element(driver=driver, element=element) == True:
+                # テストのエレメントであれば次のエレメントを探す
+                if len(elements) - 1 == i:
+                    # 最後のエレメントまでテストのエレメントだった場合はエラーメッセージを返す
+                    return const.Selenium.Message.ALL_VIDEO_PLAYED_MESSAGE
+                continue
+
             try:
                 # "視聴済み"のテキストが存在するエレメントの取得を試みる
                 element.find_element(
@@ -72,8 +80,6 @@ class Selenium:
                 # "視聴済み"のテキストが存在するエレメントが見つかった場合は次のエレメントを探す
                 continue
             except NoSuchElementException:
-                # 指定した要素が見つかるまでの待ち時間の設定を元に戻す
-                self._set_driver_implicitly_wait_default(driver=driver)
                 # "視聴済み"のテキストが存在するエレメントが見つからなかったらそれが未再生の動画のエレメントのため、そのエレメントを返す
                 return element
 
@@ -85,7 +91,7 @@ class Selenium:
 
         # 未再生の動画のエレメントが見つからなかった場合はエラーのロギングを行う
         logger.error(
-            msg=f"[selenium.py _get_first_not_played_element] \n"
+            msg=f"[selenium.py _get_first_not_played_video_element] \n"
             f"未再生の動画のエレメントが見つかりませんでした、以下が引数で渡されたエレメントのリストのクラス名です\n"
             f"{str(class_name_list)}"
         )
@@ -95,20 +101,16 @@ class Selenium:
     ) -> bool:
         """テストのエレメントかどうかを判定する関数"""
 
-        # 指定した要素が見つかるまでの待ち時間を設定
-        # 見つからなかったらすぐにエラーを出したいので0に設定
-        self._set_driver_implicitly_wait_zero(driver=driver)
-
         test_element = None
 
         try:
             test_element = (
                 element.find_element(
-                    By.CLASS_NAME,
+                    By.TAG_NAME,
                     const.Selenium.SpecificPath.JUDGE_TEST_ELEMENT_PATH[0],
                 )
                 .find_element(
-                    By.CLASS_NAME,
+                    By.TAG_NAME,
                     const.Selenium.SpecificPath.JUDGE_TEST_ELEMENT_PATH[1],
                 )
                 .find_element(
@@ -119,9 +121,6 @@ class Selenium:
         except NoSuchElementException:
             test_element = None
 
-        # 指定した要素が見つかるまでの待ち時間の設定を元に戻す
-        self._set_driver_implicitly_wait_default(driver=driver)
-
         if test_element == None:
             # テストのエレメントでなければテストではないのでFalseを返す
             return False
@@ -129,11 +128,35 @@ class Selenium:
             # テストのエレメントであればテストなのでTrueを返す
             return True
 
+    def _is_opend_element(self, element: webelement.WebElement):
+        """エレメントが解放されているかどうかを判定する関数"""
+
+        try:
+            # 未開放と判定できるエレメントを探す
+            element.find_element(
+                By.CSS_SELECTOR, const.Selenium.SpecificPath.UNOPENED_ELEMENT_PATH
+            )
+            # ここまで処理が来たら未開放と判定できるエレメントが見つかったので、Falseを返す
+            return False
+        except NoSuchElementException:
+            # 未開放と判定できるエレメントが無かったので、Trueを返す
+            return True
+
     def _get_video_length(self, element: webelement.WebElement) -> int:
         """動画の長さを取得する関数"""
 
         # 動画の長さを取得する
-        video_length = element.get_attribute("aria-label")
+        video_length = (
+            element.find_element(
+                By.TAG_NAME, const.Selenium.SpecificPath.VIDEO_LENGTH_PATH[0]
+            )
+            .find_element(By.TAG_NAME, const.Selenium.SpecificPath.VIDEO_LENGTH_PATH[1])
+            .find_element(
+                By.CSS_SELECTOR, const.Selenium.SpecificPath.VIDEO_LENGTH_PATH[2]
+            )
+            .text
+        )
+
         # 動画の長さを秒数に変換する
         video_length = int(video_length.split(":")[0]) * 60 + int(
             video_length.split(":")[1]
@@ -143,17 +166,19 @@ class Selenium:
 
     "==========================汎用関数ここまで============================"
 
-    _on_finish: Callable[[None], None] = None
+    _on_finish: Callable[[str], None] = None
+    _save_data: save.SaveData = None
 
-    def __init__(self, on_finish):
+    def __init__(self, save_data: save.SaveData, on_finish):
+        self._save_data = save_data
         self._on_finish = on_finish
 
-    def start(self, save_data: save.SaveData):
-        self._setup_chrome(save_data=save_data)
+    def start(self):
+        self._setup_chrome()
 
     "==========================メイン関数================================="
 
-    def _setup_chrome(self, save_data: save.SaveData):
+    def _setup_chrome(self):
         """Chromeをセットアップする関数"""
 
         # Chromeのオプションを設定
@@ -169,17 +194,12 @@ class Selenium:
             const.Selenium.Option.EXPERMENTAL_OPTION[1],
         )
 
-        if save_data.mute_video:
+        if self._save_data.mute_video:
             # ミュートする設定であればミュートするオプションを追加
             options.add_argument(const.Selenium.Option.MUTE_AUDIO)
 
-        # ChromDriverのパスを指定
-        service = Service(
-            executable_path=path.get_assets_path(const.Selenium.CHROME_DRIVER_NAME)
-        )
-
         # ChromeDriverを起動、設定を適用
-        driver = webdriver.Chrome(service=service, options=options)
+        driver = webdriver.Chrome(options=options)
 
         # 指定した要素が見つかるまでの待ち時間を設定
         self._set_driver_implicitly_wait_default(driver=driver)
@@ -195,40 +215,42 @@ class Selenium:
         )
 
         # ログインページを開く
-        self._open_login_page(driver=driver, save_data=save_data)
+        self._open_login_page(driver=driver)
 
-    def _open_login_page(self, driver: webdriver.Chrome, save_data: save.SaveData):
+    def _open_login_page(self, driver: webdriver.Chrome):
         """ログインページを開く関数"""
 
         # ログイン画面を開く
         driver.get(const.Selenium.Url.LOGIN)
         driver.find_element(
             By.XPATH,
-            const.Selenium.XPath.LOGIN_KIND_BUTTON(student_id=save_data.student_id),
+            const.Selenium.XPath.LOGIN_KIND_BUTTON(
+                student_id=self._save_data.student_id
+            ),
         ).click()
 
         # ログイン情報を入力
         self._send_text(
             x_path=const.Selenium.XPath.STUDENT_ID_FIELD,
-            text=save_data.student_id,
+            text=self._save_data.student_id,
             driver=driver,
         )
         self._send_text(
             x_path=const.Selenium.XPath.PASSWORD_FIELD,
-            text=save_data.password,
+            text=self._save_data.password,
             driver=driver,
         )
         # ログインボタンをクリック
         driver.find_element(By.XPATH, const.Selenium.XPath.LOGIN_BUTTON).click()
 
         # 教材ページを開く
-        self._open_subject_page(driver=driver, save_data=save_data)
+        self._open_subject_page(driver=driver)
 
-    def _open_subject_page(self, driver: webdriver.Chrome, save_data: save.SaveData):
+    def _open_subject_page(self, driver: webdriver.Chrome):
         """教材ページを開く関数"""
 
         # 指定された教材を開く
-        driver.get(save_data.chapter_url)
+        driver.get(self._save_data.chapter_url)
 
         # 同意
         try:
@@ -261,30 +283,58 @@ class Selenium:
 
         self._play_video_loop(driver=driver)
 
-    def _play_video_loop(self, driver: webdriver.Chrome):
-        """再生できる限り動画を再生し続ける関数"""
+    def _play_video_loop(
+        self, driver: webdriver.Chrome, before_clicked_element: webdriver.Chrome = None
+    ):
+        """再生できる限り動画を再生し続ける関数
+
+        Args:
+            before_clicked_element (webdriver.Chrome): 1実行の内の前回再生しようとした動画のエレメント
+        """
+
+        # 指定した要素が見つかるまでの待ち時間を0にする
+        # 見つからない事をトリガーにしている判定が存在するため
+        self._set_driver_implicitly_wait_zero(driver=driver)
 
         # 動画、テストのエレメントのリストを取得
         elements = self._get_subject_elements(driver=driver)
 
-        # 未再生のエレメントを取得
-        not_played_element = self._get_first_not_played_element(
+        # 未再生の動画エレメントを取得
+        not_played_element = self._get_first_not_played_video_element(
             driver=driver, elements=elements
         )
 
-        if self._is_test_element(driver=driver, element=not_played_element) == False:
-            # テストでなければ未再生のエレメントをクリック
-            not_played_element.click()
-            # print(
-            #     not_played_element.find_element(
-            #         const.Selenium.SpecificPath.VIDEO_LENGTH_PATH[0],
-            #     )
-            #     .find_element(const.Selenium.SpecificPath.VIDEO_LENGTH_PATH[1])
-            #     .find_element(const.Selenium.SpecificPath.VIDEO_LENGTH_PATH[2])
-            #     .text
-            # )
-        else:
-            # テストであれば _on_finish を呼び出す
-            self._on_finish()
+        # すべての動画を再生した場合は終了
+        if not_played_element == const.Selenium.Message.ALL_VIDEO_PLAYED_MESSAGE:
+            self._on_finish(const.Selenium.Message.ALL_VIDEO_PLAYED_MESSAGE)
+            return
 
-        input()
+        # 未再生のエレメントが未開放であれば、既にテストに到達しているので終了
+        if self._is_opend_element(element=not_played_element) == False:
+            self._on_finish(const.Selenium.Message.ALREADY_REACHED_TEST)
+            return
+
+        # 前回再生しようとしたエレメントと今回再生しようとしているエレメントが同じかどうかを判定する
+        if (
+            before_clicked_element != None
+            and before_clicked_element == not_played_element
+        ):
+            print("same element played")
+            # 同じであればタイムアウト時間を待ち、再帰呼び出しを行う
+            sleep(self._save_data.time_out)
+            self._play_video_loop(
+                driver=driver, before_clicked_element=not_played_element
+            )
+            return
+
+        not_played_element.click()
+
+        # 動画の長さを取得
+        video_length = self._get_video_length(element=not_played_element)
+
+        print("before sleep")
+        sleep(3)
+        print("after sleep")
+
+        self._play_video_loop(driver=driver, before_clicked_element=not_played_element)
+        return
