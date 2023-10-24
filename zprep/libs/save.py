@@ -13,10 +13,10 @@ class SaveData:
 
     def __init__(
         self,
-        student_id: str,
-        password: str,
-        chapter_url: str,
+        student_id: str = "",
+        password: str = "",
         login_kind: const.Save.LoginKind = const.Save.LoginKind.S,
+        chapter_url: str = "",
         use_sound_notice: bool = True,
         use_window_notice: bool = True,
         mute_video: bool = True,
