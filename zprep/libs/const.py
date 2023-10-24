@@ -6,8 +6,11 @@ Appクラスを除く一階層目のクラス名は関係性が高いモジュ�
 
 import tkinter
 from enum import Enum
+from idlelib import tooltip
 
 from appdirs import user_data_dir
+
+tooltip
 
 
 class App:
@@ -22,7 +25,7 @@ class Gui:
         """GUIに関する定数を定義したクラス"""
 
         # 基本サイズ
-        WINDOW_GEOMETRY = "320x265"
+        WINDOW_GEOMETRY = "320x260"
         # 入力UIの幅
         ENTRY_WIDTH = 20
         # アイコンの相対パス
@@ -57,40 +60,42 @@ class Gui:
         # チャプターURL入力UIの座標
         CHAPTER_URL_ENTRY_POS = (100, 90)
 
-        # ログイン種別ラベルのテキスト
-        LOGIN_KIND_LABEL_TEXT = "ログイン種別"
-        # ログイン種別のドロップダウンの種類
-        LOGIN_KIND_LIST = ["N", "S"]
-        # ログイン種別のドロップダウンの幅
-        LOGIN_KIND_COMBOBOX_WIDTH = 17
-        # ログイン種別ラベルの座標
-        LOGIN_KIND_LABEL_POS = (20, 120)
-        # ログイン種別ドロップダウンUIの座標
-        LOGIN_KIND_COMBOBOX_POS = (100, 120)
+        # タイムアウトのラベルのテキスト
+        TIME_OUT_LABEL_TEXT = "タイムアウト(秒)"
+        # タイムアウトのラベルが押されるキー
+        TIME_OUT_LABEL_CLICK_KEY = "<Button-1>"
+        # タイムアウトのラベルの色
+        TIME_OUT_LABEL_COLOR = "blue"
+        # タイムアウトのラベルが押されたときに飛ぶURL
+        TIME_OUT_LABEL_CLICK_URL = "https://e-words.jp/w/%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%A2%E3%82%A6%E3%83%88.html#:~:text=%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%A2%E3%82%A6%E3%83%88%20%E3%80%90time%20out%E3%80%91&text=IT%E3%81%AE%E5%88%86%E9%87%8E%E3%81%A7%E3%81%AF%E3%80%81%E5%87%A6%E7%90%86,%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%82%92%E6%84%8F%E5%91%B3%E3%81%99%E3%82%8B%E3%80%82"
+        # タイムアウトのラベルの座標
+        TIME_OUT_LABEL_POS = (5, 120)
+        # タイムアウト入力UIの座標
+        TIME_OUT_ENTRY_POS = (100, 120)
 
         # 通知モードのテキスト
         NOTICE_MODE_LABEL_TEXT = "通知モード"
         # 通知モードラベルの座標
-        NOTICE_MODE_LABEL_POS = (35, 150)
+        NOTICE_MODE_LABEL_POS = (30, 150)
 
         # サウンドの通知モードのテキスト
         NOTICE_MODE_SOUND_CHECKBOX_TEXT = "ワッカさん"
         # ウィンドウの通知モードのテキスト
         NOTICE_MODE_WINDOW_CHECKBOX_TEXT = "ウィンドウ"
         # サウンドの通知モードのチェックボックスの座標
-        NOTICE_MODE_SOUND_CHECKBOX_POS = (110, 150)
+        NOTICE_MODE_SOUND_CHECKBOX_POS = (95, 150)
         # ウィンドウの通知モードのチェックボックスの座標
-        NOTICE_MODE_WINDOW_CHECKBOX_POS = (110, 180)
+        NOTICE_MODE_WINDOW_CHECKBOX_POS = (175, 150)
 
         # 動画のミュートのテキスト
         MUTE_VIDEO_LABEL_TEXT = "動画の音をミュートする"
         # 動画のミュートのチェックボックスの座標
-        MUTE_VIDEO_CHECKBOX_POS = (95, 172)
+        MUTE_VIDEO_CHECKBOX_POS = (95, 170)
 
         # 設定保存のラベルのテキスト
         SAVE_SETTING_LABEL_TEXT = "次回からもこの設定を利用する"
         # 設定保存ボタンの座標
-        SAVE_SETTING_BUTTON_POS = (65, 197)
+        SAVE_SETTING_BUTTON_POS = (95, 190)
 
         # 通知音量のテキスト
         NOTICE_SOUND_SCALE_LABEL_TEXT = "ワッカさんの声量"
@@ -113,7 +118,7 @@ class Gui:
         # 開始ボタンのテキスト
         START_BUTTON_TEXT = "開始"
         # 開始ボタンの座標
-        START_BUTTON_POS = (140, 225)
+        START_BUTTON_POS = (140, 220)
         # 開始ボタンが実行されるキー
         START_BUTTON_EXECUTE_KEY = "<Return>"
 
@@ -149,20 +154,14 @@ class Save:
             # login_infoオブジェクトのKey
             STUDENT_ID = "student_id"
             PASSWORD = "password"
-            LOGIN_KIND = "login_kind"
 
             # optionオブジェクトのKey
             CHATPER_URL = "chapter_url"
+            TIME_OUT = "time_out"
             USE_SOUND_NOTICE = "use_sound_notice"
             USE_WINDOW_NOTICE = "use_window_notice"
             NOTICE_SOUND_SCALE = "notice_sound_scale"
             MUTE_VIDEO = "mute_video"
-
-    class LoginKind(Enum):
-        """ログイン種別を定義したクラス"""
-
-        N = "N"
-        S = "S"
 
 
 class Selenium:
@@ -197,10 +196,10 @@ class Selenium:
     class XPath:
         """XPathを定義したクラス"""
 
-        def LOGIN_KIND_BUTTON(kind: Save.LoginKind) -> str:
+        def LOGIN_KIND_BUTTON(student_id: str) -> str:
             """ログイン種別のボタンのXPathを返す関数"""
 
-            if kind == Save.LoginKind.N:
+            if "N" in student_id:
                 return (
                     '//*[@id="root"]/div/div/div[2]/div[2]/div[1]/div[1]/div/div[1]/a'
                 )
@@ -260,3 +259,6 @@ class Selenium:
 
         # エレメントのテスト判定に必要なエレメントまでのパス
         JUDGE_TEST_ELEMENT_PATH = ("div", "div", ".sc-aXZVg.iFkSEV")
+
+        # 動画時間の取得に必要なエレメントまでのパス
+        VIDEO_LENGTH_PATH = ("div", "div", ".sc-aXZVg.iuHQbN")

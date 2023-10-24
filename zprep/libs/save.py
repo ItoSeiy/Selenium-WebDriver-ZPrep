@@ -15,8 +15,8 @@ class SaveData:
         self,
         student_id: str = "",
         password: str = "",
-        login_kind: const.Save.LoginKind = const.Save.LoginKind.S,
         chapter_url: str = "",
+        time_out: int = 5,
         use_sound_notice: bool = True,
         use_window_notice: bool = True,
         mute_video: bool = True,
@@ -26,12 +26,12 @@ class SaveData:
         self.login_info = {
             const.Save.SaveDataJsonKey.String.STUDENT_ID: student_id,
             const.Save.SaveDataJsonKey.String.PASSWORD: password,
-            const.Save.SaveDataJsonKey.String.LOGIN_KIND: login_kind.value,
         }
 
         self.option = {}
         self.option = {
             const.Save.SaveDataJsonKey.String.CHATPER_URL: chapter_url,
+            const.Save.SaveDataJsonKey.String.TIME_OUT: time_out,
             const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE: use_sound_notice,
             const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE: use_window_notice,
             const.Save.SaveDataJsonKey.String.MUTE_VIDEO: mute_video,
@@ -63,11 +63,6 @@ class SaveData:
                     password=dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][
                         const.Save.SaveDataJsonKey.String.PASSWORD
                     ],
-                    login_kind=const.Save.LoginKind(
-                        dec[const.Save.SaveDataJsonKey.Object.LOGIN_INFO][
-                            const.Save.SaveDataJsonKey.String.LOGIN_KIND
-                        ]
-                    ),
                     chapter_url=dec[const.Save.SaveDataJsonKey.Object.OPTION][
                         const.Save.SaveDataJsonKey.String.CHATPER_URL
                     ],
@@ -135,16 +130,14 @@ class SaveData:
         return self.login_info[const.Save.SaveDataJsonKey.String.PASSWORD]
 
     @property
-    def login_kind(self) -> const.Save.LoginKind:
-        """ログイン種別を取得する"""
-        return const.Save.LoginKind(
-            self.login_info[const.Save.SaveDataJsonKey.String.LOGIN_KIND]
-        )
-
-    @property
     def chapter_url(self) -> str:
         """チャプターURLを取得する"""
         return self.option[const.Save.SaveDataJsonKey.String.CHATPER_URL]
+
+    @property
+    def time_out(self) -> int:
+        """タイムアウトを取得する"""
+        return self.option[const.Save.SaveDataJsonKey.String.TIME_OUT]
 
     @property
     def use_sound_notice(self) -> bool:

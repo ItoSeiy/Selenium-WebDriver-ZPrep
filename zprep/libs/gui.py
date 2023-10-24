@@ -2,14 +2,17 @@ from __future__ import annotations
 
 """GUIに関する処理を行うモジュール"""
 
-import os
 import tkinter
 import tkinter.ttk as ttk
+import webbrowser
+from typing import Callable
 
 from . import const, path, save
 
 
-def create(save_data: save.SaveData, on_start_button_click):
+def create(
+    save_data: save.SaveData, on_start_button_click: Callable[[save.SaveData], None]
+):
     """_summary_
 
     Args:
@@ -73,24 +76,28 @@ def create(save_data: save.SaveData, on_start_button_click):
         lambda x: chapter_url_entry.focus_set(),
     )
 
-    # ログイン種別のラベルの作成
-    login_kind_label = tkinter.Label(text=const.Gui.Window.LOGIN_KIND_LABEL_TEXT)
-    login_kind_label.place(
-        x=const.Gui.Window.LOGIN_KIND_LABEL_POS[0],
-        y=const.Gui.Window.LOGIN_KIND_LABEL_POS[1],
+    # タイムアウトのラベルの作成
+    time_out_label = tkinter.Label(
+        text=const.Gui.Window.TIME_OUT_LABEL_TEXT,
+        fg=const.Gui.Window.TIME_OUT_LABEL_COLOR,
+    )
+    time_out_label.place(
+        x=const.Gui.Window.TIME_OUT_LABEL_POS[0],
+        y=const.Gui.Window.TIME_OUT_LABEL_POS[1],
+    )
+    # タイムアウトのラベルをクリックしたときに説明ページを開く
+    time_out_label.bind(
+        const.Gui.Window.TIME_OUT_LABEL_CLICK_KEY,
+        lambda x: webbrowser.open(const.Gui.Window.TIME_OUT_LABEL_CLICK_URL),
     )
 
-    # ログイン種別の選択ドロップダウンUIの作成
-    login_kind_combobox = ttk.Combobox(
-        tki,
-        values=const.Gui.Window.LOGIN_KIND_LIST,
-        width=const.Gui.Window.LOGIN_KIND_COMBOBOX_WIDTH,
+    # タイムアウト入力UIの作成
+    time_out_entry = tkinter.Entry(width=const.Gui.Window.ENTRY_WIDTH)
+    time_out_entry.place(
+        x=const.Gui.Window.TIME_OUT_ENTRY_POS[0],
+        y=const.Gui.Window.TIME_OUT_ENTRY_POS[1],
     )
-    login_kind_combobox.place(
-        x=const.Gui.Window.LOGIN_KIND_COMBOBOX_POS[0],
-        y=const.Gui.Window.LOGIN_KIND_COMBOBOX_POS[1],
-    )
-    login_kind_combobox.insert(tkinter.END, save_data.login_kind.value)
+    time_out_entry.insert(tkinter.END, save_data.time_out)
 
     # 通知モードのラベルの作成
     notice_mode_label = tkinter.Label(text=const.Gui.Window.NOTICE_MODE_LABEL_TEXT)
@@ -190,7 +197,6 @@ def create(save_data: save.SaveData, on_start_button_click):
             new_save_data=save.SaveData(
                 student_id=student_id_entry.get(),
                 password=password_entry.get(),
-                login_kind=const.Save.LoginKind(login_kind_combobox.get()),
                 chapter_url=chapter_url_entry.get(),
                 use_sound_notice=notice_mode_sound_boolean_var.get(),
                 use_window_notice=notice_mode_window_boolean_var.get(),
@@ -214,7 +220,6 @@ def create(save_data: save.SaveData, on_start_button_click):
             new_save_data=save.SaveData(
                 student_id=student_id_entry.get(),
                 password=password_entry.get(),
-                login_kind=const.Save.LoginKind.S,
                 chapter_url=chapter_url_entry.get(),
                 use_sound_notice=notice_mode_sound_boolean_var.get(),
                 use_window_notice=notice_mode_window_boolean_var.get(),
