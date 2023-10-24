@@ -29,6 +29,12 @@ class Audio:
         WAKKA_MP3 = "audio\wakka.mp3"
 
 
+class Notify:
+    MESSAGE = "作り直しした新生Z予備クンきもちよすぎだろ!!!"
+    # 通知用の相対パスのリスト
+    ICON_PATH_LIST = ["icon\wakka01.ico", "icon\wakka02.ico"]
+
+
 class Gui:
     class Window:
         """GUIに関する定数を定義したクラス"""
@@ -39,10 +45,6 @@ class Gui:
         ENTRY_WIDTH = 20
         # アイコンの相対パス
         ICON_PATH = "icon\icon.ico"
-        # アイコン01の相対パス
-        ICON_PATH_01 = "icon\wakka01.ico"
-        # アイコン02のパス
-        ICON_PATH_02 = "icon\wakka02.ico"
 
         # 学籍番号ラベルのテキスト
         STUDENT_ID_LABEL_TEXT = "学籍番号"

@@ -166,10 +166,12 @@ class Selenium:
 
     "==========================汎用関数ここまで============================"
 
-    _on_finish: Callable[[str], None] = None
+    _on_finish: Callable[[save.SaveData, str], None] = None
     _save_data: save.SaveData = None
 
-    def __init__(self, save_data: save.SaveData, on_finish):
+    def __init__(
+        self, save_data: save.SaveData, on_finish: Callable[[save.SaveData, str], None]
+    ):
         self._save_data = save_data
         self._on_finish = on_finish
 
@@ -310,7 +312,10 @@ class Selenium:
             logger = logging.getLogger(const.Log.DEFAULT_LOGGER)
             logger.debug(f"{const.Selenium.Message.ALL_VIDEO_PLAYED_MESSAGE}")
 
-            self._on_finish(const.Selenium.Message.ALL_VIDEO_PLAYED_MESSAGE)
+            self._on_finish(
+                self._save_data, const.Selenium.Message.ALL_VIDEO_PLAYED_MESSAGE
+            )
+            driver.close()
             return
 
         # 未再生のエレメントが未開放であれば、既にテストに到達しているので終了
@@ -321,7 +326,10 @@ class Selenium:
                 f"{const.Selenium.Message.ALL_VIDEO_PLAYED_MESSAGE} \n not_played_element:{not_played_element.get_attribute(const.Selenium.Tag.CLASS)} \n text:{not_played_element.text}"
             )
 
-            self._on_finish(const.Selenium.Message.ALREADY_REACHED_TEST)
+            self._on_finish(
+                self._save_data, const.Selenium.Message.ALREADY_REACHED_TEST
+            )
+            driver.close()
             return
 
         # 前回再生しようとしたエレメントと今回再生しようとしているエレメントが同じかどうかを判定する
