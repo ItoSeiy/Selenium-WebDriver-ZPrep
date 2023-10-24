@@ -20,6 +20,15 @@ class App:
     AUTHOR = "IS"
 
 
+class Audio:
+    """オーディオの情報を定義したクラス"""
+
+    class MP3:
+        """MP3の情報を定義したクラス"""
+
+        WAKKA_MP3 = "audio\wakka.mp3"
+
+
 class Gui:
     class Window:
         """GUIに関する定数を定義したクラス"""
@@ -29,11 +38,11 @@ class Gui:
         # 入力UIの幅
         ENTRY_WIDTH = 20
         # アイコンの相対パス
-        ICON_PATH = "assets/icon/icon.ico"
+        ICON_PATH = "icon\icon.ico"
         # アイコン01の相対パス
-        ICON_PATH_01 = "assets/icon/wakka01.ico"
+        ICON_PATH_01 = "icon\wakka01.ico"
         # アイコン02のパス
-        ICON_PATH_02 = "assets/icon/wakka02.ico"
+        ICON_PATH_02 = "icon\wakka02.ico"
 
         # 学籍番号ラベルのテキスト
         STUDENT_ID_LABEL_TEXT = "学籍番号"

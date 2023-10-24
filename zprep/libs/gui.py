@@ -231,7 +231,7 @@ def create(
     )
 
     # アイコン画像の絶対パスを取得
-    icon_file_path = path.get_assets_path("icon/icon.ico")
+    icon_file_path = path.get_assets_path(const.Gui.Window.ICON_PATH)
     # アイコン設定
     tki.iconbitmap(icon_file_path)
 
