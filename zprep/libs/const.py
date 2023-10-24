@@ -202,3 +202,13 @@ class Selenium:
 
         # 必修教材のみボタン
         ONLY_REQUIRED_SUBJECT_BUTTON = "/html/body/div[1]/div/div[2]/div[2]/main/div[2]/div[1]/div[1]/div[2]/div/div[2]/button[1]"
+
+        # 動画、テストのエレメントのリストの格納場所
+        SUBJECT_ELEMENTS_CONTAINER = (
+            "/html/body/div[1]/div/div[2]/div[2]/main/div[2]/div[1]/div[1]/ul"
+        )
+
+    class Tag:
+        """タグを定義したクラス"""
+
+        LIST_ITEM = "li"
