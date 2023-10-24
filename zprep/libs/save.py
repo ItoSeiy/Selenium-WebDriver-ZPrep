@@ -71,18 +71,26 @@ class SaveData:
                     chapter_url=dec[const.Save.SaveDataJsonKey.Object.OPTION][
                         const.Save.SaveDataJsonKey.String.CHATPER_URL
                     ],
-                    use_sound_notice=dec[const.Save.SaveDataJsonKey.Object.OPTION][
-                        const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE
-                    ],
-                    use_window_notice=dec[const.Save.SaveDataJsonKey.Object.OPTION][
-                        const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE
-                    ],
-                    mute_video=[const.Save.SaveDataJsonKey.Object.OPTION][
-                        const.Save.SaveDataJsonKey.String.MUTE_VIDEO
-                    ],
-                    notice_sound_scale=dec[const.Save.SaveDataJsonKey.Object.OPTION][
-                        const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE
-                    ],
+                    use_sound_notice=bool(
+                        dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                            const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE
+                        ]
+                    ),
+                    use_window_notice=bool(
+                        dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                            const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE
+                        ]
+                    ),
+                    mute_video=bool(
+                        dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                            const.Save.SaveDataJsonKey.String.MUTE_VIDEO
+                        ]
+                    ),
+                    notice_sound_scale=float(
+                        dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                            const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE
+                        ]
+                    ),
                 )
         except FileNotFoundError:
             # ファイルが存在しない場合は空なセーブデータを返す
