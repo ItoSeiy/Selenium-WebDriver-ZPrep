@@ -15,7 +15,10 @@ st_handler.setFormatter(logging.Formatter(const.Log.DEFAULT_LOG_FORMAT))
 
 # Fileハンドラクラスをインスタンス化
 fl_handler = logging.FileHandler(
-    filename=f"{const.Log.Path.DATA_PATH}/{const.Log.Path.FILE_NAME}", encoding="utf-8"
+    filename=f"{const.Log.Path.DATA_PATH}/{const.Log.Path.FILE_NAME}",
+    encoding="utf-8",
+    # 毎回上書きする
+    mode="w",
 )
 # フォーマッターを設定
 fl_handler.setFormatter(logging.Formatter(const.Log.DEFAULT_LOG_FORMAT))

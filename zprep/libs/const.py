@@ -229,7 +229,7 @@ class Selenium:
 
         # 動画、テストのエレメントのリストの格納場所
         SUBJECT_ELEMENTS_CONTAINER = (
-            "/html/body/div[1]/div/div[2]/div[2]/main/div[2]/div[1]/div[1]/ul"
+            '//*[@id="root"]/div/div[2]/div[2]/main/div[2]/div[1]/div[1]/ul'
         )
 
     class Tag:

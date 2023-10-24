@@ -306,11 +306,21 @@ class Selenium:
 
         # すべての動画を再生した場合は終了
         if not_played_element == const.Selenium.Message.ALL_VIDEO_PLAYED_MESSAGE:
+            # ログ
+            logger = logging.getLogger(const.Log.DEFAULT_LOGGER)
+            logger.debug(f"{const.Selenium.Message.ALL_VIDEO_PLAYED_MESSAGE}")
+
             self._on_finish(const.Selenium.Message.ALL_VIDEO_PLAYED_MESSAGE)
             return
 
         # 未再生のエレメントが未開放であれば、既にテストに到達しているので終了
         if self._is_opend_element(element=not_played_element) == False:
+            # ログ
+            logger = logging.getLogger(const.Log.DEFAULT_LOGGER)
+            logger.debug(
+                f"{const.Selenium.Message.ALL_VIDEO_PLAYED_MESSAGE} \n not_played_element:{not_played_element.get_attribute(const.Selenium.Tag.CLASS)} \n text:{not_played_element.text}"
+            )
+
             self._on_finish(const.Selenium.Message.ALREADY_REACHED_TEST)
             return
 
@@ -319,7 +329,10 @@ class Selenium:
             before_clicked_element != None
             and before_clicked_element == not_played_element
         ):
-            print("same element played")
+            # ログ
+            logger = logging.getLogger(const.Log.DEFAULT_LOGGER)
+            logger.debug("same element playing")
+
             # 同じであればタイムアウト時間を待ち、再帰呼び出しを行う
             sleep(self._save_data.time_out)
             self._play_video_loop(
@@ -332,9 +345,15 @@ class Selenium:
         # 動画の長さを取得
         video_length = self._get_video_length(element=not_played_element)
 
-        print("before sleep")
-        sleep(3)
-        print("after sleep")
+        # ログ
+        logger = logging.getLogger(const.Log.DEFAULT_LOGGER)
+        logger.debug(f"before sleep : sleep : time{video_length}")
+
+        # 動画の長さを待つ
+        sleep(video_length)
+
+        # ログ
+        logger.debug(f"after sleep : sleep time : {video_length}")
 
         self._play_video_loop(driver=driver, before_clicked_element=not_played_element)
         return
