@@ -118,6 +118,17 @@ class Gui:
         START_BUTTON_EXECUTE_KEY = "<Return>"
 
 
+class Log:
+    DEFAULT_LOGGER = "default_logger"
+    DEFAULT_LOG_FORMAT = (
+        f"%(levelname)-9s  %(asctime)s [%(filename)s:%(lineno)d] %(message)s"
+    )
+
+    class Path:
+        FILE_NAME = "log.log"
+        DATA_PATH = user_data_dir(App.NAME, App.AUTHOR)
+
+
 class Save:
     class Path:
         FILE_NAME = "save_data.json"
@@ -158,10 +169,25 @@ class Selenium:
     CHROME_DRIVER_NAME = "chromedriver.exe"
 
     class Option:
-        """Selenium関連のオプションを定義したクラス"""
+        """Selenium関連のオプション、設定を定義したクラス"""
 
         # ミュート
         MUTE_AUDIO = "--mute-audio"
+
+        # ログの無効化
+        DISABLE_LOGGING = "disable-logging"
+        # ログレベル3 (余分なログが出ないレベル)
+        LOG_LEVEL_3 = "--log-level=3"
+        # 長文ログの無効化
+        EXPERMENTAL_OPTION = ("excludeSwitches", ["enable-logging"])
+
+        # タイムアウトまでの時間
+        TIME_TO_WAIT = 8
+
+        # ウィンドウサイズ
+        WINDOW_SIZE = (1500, 1000)
+        # ウィンドウ位置
+        WINDOW_POS = (550, 300)
 
     class Url:
         """URLを定義したクラス"""
@@ -212,3 +238,25 @@ class Selenium:
         """タグを定義したクラス"""
 
         LIST_ITEM = "li"
+
+        DIVISION = "div"
+
+        CLASS = "CLASS"
+
+    class SpecificPath:
+        """具体的なエレメントまでのパスを定義したクラス"""
+
+        # 動画の視聴判定に必要なエレメントまでのパス
+        VIDEO_PLAYED_PATH = (
+            "div",
+            "div",
+            ".sc-aXZVg.sc-gEvEer.sc-lcfvsp-11.dKubqp.fteAEG.hZhBzF",
+            ".sc-aXZVg.sc-gEvEer.sc-lcfvsp-12.dKubqp.fteAEG.jrmmTF",
+            ".sc-aXZVg.sc-gEvEer.miLza.fteAEG",
+            "div",
+            "div",
+            ".sc-aXZVg.kXcVyQ",
+        )
+
+        # エレメントのテスト判定に必要なエレメントまでのパス
+        JUDGE_TEST_ELEMENT_PATH = ("div", "div", ".sc-aXZVg.iFkSEV")
