@@ -5,12 +5,8 @@ Appクラスを除く一階層目のクラス名は関係性が高いモジュ�
 """
 
 import tkinter
-from enum import Enum
-from idlelib import tooltip
 
 from appdirs import user_data_dir
-
-tooltip
 
 
 class App:
@@ -78,7 +74,7 @@ class Gui:
         # タイムアウトのラベルの色
         TIME_OUT_LABEL_COLOR = "blue"
         # タイムアウトのラベルが押されたときに飛ぶURL
-        TIME_OUT_LABEL_CLICK_URL = "https://e-words.jp/w/%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%A2%E3%82%A6%E3%83%88.html#:~:text=%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%A2%E3%82%A6%E3%83%88%20%E3%80%90time%20out%E3%80%91&text=IT%E3%81%AE%E5%88%86%E9%87%8E%E3%81%A7%E3%81%AF%E3%80%81%E5%87%A6%E7%90%86,%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%82%92%E6%84%8F%E5%91%B3%E3%81%99%E3%82%8B%E3%80%82"
+        TIME_OUT_LABEL_CLICK_URL = r"https://e-words.jp/w/%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%A2%E3%82%A6%E3%83%88.html#:~:text=%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%A2%E3%82%A6%E3%83%88%20%E3%80%90time%20out%E3%80%91&text=IT%E3%81%AE%E5%88%86%E9%87%8E%E3%81%A7%E3%81%AF%E3%80%81%E5%87%A6%E7%90%86,%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%82%92%E6%84%8F%E5%91%B3%E3%81%99%E3%82%8B%E3%80%82"
         # タイムアウトのラベルの座標
         TIME_OUT_LABEL_POS = (5, 120)
         # タイムアウト入力UIの座標

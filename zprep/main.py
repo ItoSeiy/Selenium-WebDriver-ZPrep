@@ -12,12 +12,10 @@ from mutagen.mp3 import MP3
 
 
 def _on_finish_selenium(save_data: save.SaveData, message: str):
-    if save_data.use_sound_notice:
-        audio.play_sound(const.Audio.MP3.WAKKA_MP3, save_data.notice_sound_scale)
 
     sound_length = MP3(path.get_assets_path(const.Audio.MP3.WAKKA_MP3)).info.length
 
-    if save_data.use_sound_notice:
+    if save_data.use_window_notice:
         notify.notify(
             title=message,
             timeout=int(
@@ -25,6 +23,9 @@ def _on_finish_selenium(save_data: save.SaveData, message: str):
                 sound_length
             ),
         )
+
+    if save_data.use_sound_notice:
+        audio.play_sound(const.Audio.MP3.WAKKA_MP3, save_data.notice_sound_scale)
 
     sleep(sound_length)
     exit()
