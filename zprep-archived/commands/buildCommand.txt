@@ -1,0 +1,13 @@
+Z予備クン
+  Specファイル
+  PyInstaller main.spec
+
+  手打ち
+  PyInstaller ./zprep/main.py --icon=./assets/icon/icon.ico --add-data "./assets/icon/icon.ico;./assets/icon/" --add-data "./assets/audio/wakka.mp3;./assets/audio/" --add-data "./assets/icon/wakka01.ico;./assets/icon/" --add-data "./assets/icon/wakka02.ico;./assets/icon/" --hidden-import plyer.platforms.win.notification --hidden-import zprep.libs.audio --hidden-import zprep.libs.const --hidden-import zprep.libs.gui --hidden-import zprep.libs.notify --hidden-import zprep.libs.path --hidden-import zprep.libs.save --hidden-import zprep.libs.selenium
+
+セーブデータ削除するやつ
+  Specファイル
+  PyInstaller deleteSaveData.spec
+
+  手打ち
+  PyInstaller deleteSaveData.py --onefile --icon=icon.ico --add-data "./icon.ico;./" --noconsole
