@@ -22,13 +22,13 @@ class Audio:
     class MP3:
         """MP3の情報を定義したクラス"""
 
-        WAKKA_MP3 = "audio\wakka.mp3"
+        WAKKA_MP3 = r"audio\wakka.mp3"
 
 
 class Notify:
     MESSAGE = "作り直しした新生Z予備クンきもちよすぎだろ!!!"
     # 通知用の相対パスのリスト
-    ICON_PATH_LIST = ["icon\wakka01.ico", "icon\wakka02.ico"]
+    ICON_PATH_LIST = [r"icon\wakka01.ico", r"icon\wakka02.ico"]
 
 
 class Gui:
@@ -40,7 +40,7 @@ class Gui:
         # 入力UIの幅
         ENTRY_WIDTH = 20
         # アイコンの相対パス
-        ICON_PATH = "icon\icon.ico"
+        ICON_PATH = r"icon\icon.ico"
 
         # 学籍番号ラベルのテキスト
         STUDENT_ID_LABEL_TEXT = "学籍番号"
