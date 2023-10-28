@@ -76,6 +76,22 @@ def create(
         lambda x: chapter_url_entry.focus_set(),
     )
 
+    # 再生できる動画の上限数のラベルの作成
+    max_playing_count_label = tkinter.Label(
+        text=const.Gui.Window.MAX_PLAYING_COUNT_LABEL_TEXT
+    )
+    max_playing_count_label.place(
+        x=const.Gui.Window.MAX_PLAYING_COUNT_LABEL_POS[0],
+        y=const.Gui.Window.MAX_PLAYING_COUNT_LABEL_POS[1],
+    )
+    # 再生できる動画の上限数の入力UIの作成
+    max_playing_count_entry = tkinter.Entry(width=const.Gui.Window.ENTRY_WIDTH)
+    max_playing_count_entry.place(
+        x=const.Gui.Window.MAX_PLAYING_COUNT_ENTRY_POS[0],
+        y=const.Gui.Window.MAX_PLAYING_COUNT_ENTRY_POS[1],
+    )
+    max_playing_count_entry.insert(tkinter.END, save_data.max_playing_count)
+
     # タイムアウトのラベルの作成
     time_out_label = tkinter.Label(
         text=const.Gui.Window.TIME_OUT_LABEL_TEXT,
@@ -198,6 +214,8 @@ def create(
                 student_id=student_id_entry.get(),
                 password=password_entry.get(),
                 chapter_url=chapter_url_entry.get(),
+                max_playing_count=max_playing_count_entry.get(),
+                time_out=time_out_entry.get(),
                 use_sound_notice=notice_mode_sound_boolean_var.get(),
                 use_window_notice=notice_mode_window_boolean_var.get(),
                 mute_video=mute_mode_boolean_var.get(),
@@ -209,6 +227,7 @@ def create(
     start_button.place(
         x=const.Gui.Window.START_BUTTON_POS[0],
         y=const.Gui.Window.START_BUTTON_POS[1],
+        width=const.Gui.Window.START_BUTTON_WIDTH,
     )
 
     # 開始ボタンが実行されるキーを設定する
@@ -221,6 +240,8 @@ def create(
                 student_id=student_id_entry.get(),
                 password=password_entry.get(),
                 chapter_url=chapter_url_entry.get(),
+                max_playing_count=max_playing_count_entry.get(),
+                time_out=time_out_entry.get(),
                 use_sound_notice=notice_mode_sound_boolean_var.get(),
                 use_window_notice=notice_mode_window_boolean_var.get(),
                 mute_video=mute_mode_boolean_var.get(),
@@ -260,4 +281,3 @@ def _on_start_button_click(
     else:
         # 設定を保存しない場合は on_start_button_clickにはなにも渡さない
         on_start_button_click(None)
-    tki.destroy()

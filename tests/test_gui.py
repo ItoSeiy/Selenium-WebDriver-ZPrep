@@ -12,6 +12,7 @@ def _on_start_button_click(save_data: save.SaveData):
     print(f"student_id: {save_data.student_id}")
     print(f"password: {save_data.password}")
     print(f"chapter_url: {save_data.chapter_url}")
+    print(f"max_playing_count: {save_data.max_playing_count}")
     print(f"time_out: {save_data.time_out}")
     print(f"use_sound_notice: {save_data.use_sound_notice}")
     print(f"use_window_notice: {save_data.use_window_notice}")

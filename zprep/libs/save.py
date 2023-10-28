@@ -16,6 +16,7 @@ class SaveData:
         student_id: str = "",
         password: str = "",
         chapter_url: str = "",
+        max_playing_count: int = 50,
         time_out: int = 5,
         use_sound_notice: bool = True,
         use_window_notice: bool = True,
@@ -31,6 +32,7 @@ class SaveData:
         self.option = {}
         self.option = {
             const.Save.SaveDataJsonKey.String.CHATPER_URL: chapter_url,
+            const.Save.SaveDataJsonKey.String.MAX_PLAYING_COUNT: max_playing_count,
             const.Save.SaveDataJsonKey.String.TIME_OUT: time_out,
             const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE: use_sound_notice,
             const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE: use_window_notice,
@@ -95,10 +97,6 @@ class SaveData:
     def save_to_json(save_data: SaveData, path: str, file_name: str):
         """セーブデータをJsonに保存する"""
 
-        # ディレクトリが存在しない場合は作成する
-        # exist_ok=Trueとすると既に存在しているディレクトリを指定してもエラーにならない
-        os.makedirs(path, exist_ok=True)
-
         # SaveDataが持つ値すべての値(__dict__)をJSON形式に変換(エンコード)する
         json_str = json.dumps(save_data.__dict__)
 
@@ -135,26 +133,31 @@ class SaveData:
         return self.option[const.Save.SaveDataJsonKey.String.CHATPER_URL]
 
     @property
-    def time_out(self) -> int:
+    def max_playing_count(self) -> int:
+        """同時に流せる動画の数を取得する"""
+        return int(self.option[const.Save.SaveDataJsonKey.String.MAX_PLAYING_COUNT])
+
+    @property
+    def time_out(self) -> float:
         """タイムアウトを取得する"""
-        return self.option[const.Save.SaveDataJsonKey.String.TIME_OUT]
+        return float(self.option[const.Save.SaveDataJsonKey.String.TIME_OUT])
 
     @property
     def use_sound_notice(self) -> bool:
         """音声通知を使用するかを取得する"""
-        return self.option[const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE]
+        return bool(self.option[const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE])
 
     @property
     def use_window_notice(self) -> bool:
         """ウィンドウ通知を使用するかを取得する"""
-        return self.option[const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE]
+        return bool(self.option[const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE])
 
     @property
     def mute_video(self) -> bool:
         """動画をミュートするかを取得する"""
-        return self.option[const.Save.SaveDataJsonKey.String.MUTE_VIDEO]
+        return bool(self.option[const.Save.SaveDataJsonKey.String.MUTE_VIDEO])
 
     @property
     def notice_sound_scale(self) -> float:
         """通知音量を取得する"""
-        return self.option[const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE]
+        return float(self.option[const.Save.SaveDataJsonKey.String.NOTICE_SOUND_SCALE])

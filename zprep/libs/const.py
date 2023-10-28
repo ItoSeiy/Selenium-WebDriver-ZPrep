@@ -36,7 +36,7 @@ class Gui:
         """GUIに関する定数を定義したクラス"""
 
         # 基本サイズ
-        WINDOW_GEOMETRY = "320x260"
+        WINDOW_GEOMETRY = "350x290"
         # 入力UIの幅
         ENTRY_WIDTH = 20
         # アイコンの相対パス
@@ -45,16 +45,16 @@ class Gui:
         # 学籍番号ラベルのテキスト
         STUDENT_ID_LABEL_TEXT = "学籍番号"
         # 学籍番号ラベルの座標
-        STUDENT_ID_LABEL_POS = (30, 30)
+        STUDENT_ID_LABEL_POS = (70, 30)
         # 学籍番号入力UIの座標
-        STUDENT_ID_ENTRY_POS = (100, 30)
+        STUDENT_ID_ENTRY_POS = (130, 30)
 
         # パスワードラベルのテキスト
         PASSWORD_LABEL_TEXT = "パスワード"
         # パスワードラベルの座標
-        PASSWORD_LABEL_POS = (30, 60)
+        PASSWORD_LABEL_POS = (70, 60)
         # パスワード入力UIの座標
-        PASSWORD_ENTRY_POS = (100, 60)
+        PASSWORD_ENTRY_POS = (130, 60)
         # パスワードが入力されている時に表示する文字
         PASSWORD_ENTRY_SHOW_TEXT = "*"
 
@@ -63,9 +63,16 @@ class Gui:
         # チャプターURL入力が選択されるキー
         CHAPTER_URL_ENTRY_SELECT_KEY = "<Control-Key>"
         # チャプターURLラベルの座標
-        CHAPTER_URL_LABEL_POS = (5, 90)
+        CHAPTER_URL_LABEL_POS = (43, 90)
         # チャプターURL入力UIの座標
-        CHAPTER_URL_ENTRY_POS = (100, 90)
+        CHAPTER_URL_ENTRY_POS = (130, 90)
+
+        # 同時に流せる動画の数のラベルのテキスト
+        MAX_PLAYING_COUNT_LABEL_TEXT = "同時に流せる動画の数"
+        # 同時に流せる動画の数のラベルの座標
+        MAX_PLAYING_COUNT_LABEL_POS = (5, 120)
+        # 同時に流せる動画の数の入力UIの座標
+        MAX_PLAYING_COUNT_ENTRY_POS = (130, 120)
 
         # タイムアウトのラベルのテキスト
         TIME_OUT_LABEL_TEXT = "タイムアウト(秒)"
@@ -76,41 +83,41 @@ class Gui:
         # タイムアウトのラベルが押されたときに飛ぶURL
         TIME_OUT_LABEL_CLICK_URL = r"https://e-words.jp/w/%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%A2%E3%82%A6%E3%83%88.html#:~:text=%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%A2%E3%82%A6%E3%83%88%20%E3%80%90time%20out%E3%80%91&text=IT%E3%81%AE%E5%88%86%E9%87%8E%E3%81%A7%E3%81%AF%E3%80%81%E5%87%A6%E7%90%86,%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%82%92%E6%84%8F%E5%91%B3%E3%81%99%E3%82%8B%E3%80%82"
         # タイムアウトのラベルの座標
-        TIME_OUT_LABEL_POS = (5, 120)
+        TIME_OUT_LABEL_POS = (45, 150)
         # タイムアウト入力UIの座標
-        TIME_OUT_ENTRY_POS = (100, 120)
+        TIME_OUT_ENTRY_POS = (130, 150)
 
         # 通知モードのテキスト
         NOTICE_MODE_LABEL_TEXT = "通知モード"
         # 通知モードラベルの座標
-        NOTICE_MODE_LABEL_POS = (30, 150)
+        NOTICE_MODE_LABEL_POS = (30, 180)
 
         # サウンドの通知モードのテキスト
         NOTICE_MODE_SOUND_CHECKBOX_TEXT = "ワッカさん"
         # ウィンドウの通知モードのテキスト
         NOTICE_MODE_WINDOW_CHECKBOX_TEXT = "ウィンドウ"
         # サウンドの通知モードのチェックボックスの座標
-        NOTICE_MODE_SOUND_CHECKBOX_POS = (95, 150)
+        NOTICE_MODE_SOUND_CHECKBOX_POS = (125, 180)
         # ウィンドウの通知モードのチェックボックスの座標
-        NOTICE_MODE_WINDOW_CHECKBOX_POS = (175, 150)
+        NOTICE_MODE_WINDOW_CHECKBOX_POS = (195, 180)
 
         # 動画のミュートのテキスト
         MUTE_VIDEO_LABEL_TEXT = "動画の音をミュートする"
         # 動画のミュートのチェックボックスの座標
-        MUTE_VIDEO_CHECKBOX_POS = (95, 170)
+        MUTE_VIDEO_CHECKBOX_POS = (125, 200)
 
         # 設定保存のラベルのテキスト
         SAVE_SETTING_LABEL_TEXT = "次回からもこの設定を利用する"
         # 設定保存ボタンの座標
-        SAVE_SETTING_BUTTON_POS = (95, 190)
+        SAVE_SETTING_BUTTON_POS = (125, 220)
 
         # 通知音量のテキスト
         NOTICE_SOUND_SCALE_LABEL_TEXT = "ワッカさんの声量"
         # 通知音量のラベルの座標
-        NOTICE_SOUND_SCALE_LABEL_POS = (230, 28)
+        NOTICE_SOUND_SCALE_LABEL_POS = (260, 28)
 
         # 通知音量のスライドバーの座標
-        NOTICE_SOUND_SCALE_SLIDER_POS = (265, 45)
+        NOTICE_SOUND_SCALE_SLIDER_POS = (295, 45)
         # 通知音量のスライドバーの向き
         NOTICE_SOUND_SCALE_SLIDER_ORIENT = tkinter.VERTICAL
         # 通知音量のスライドバーの長さ
@@ -125,7 +132,9 @@ class Gui:
         # 開始ボタンのテキスト
         START_BUTTON_TEXT = "開始"
         # 開始ボタンの座標
-        START_BUTTON_POS = (140, 220)
+        START_BUTTON_POS = (140, 250)
+        # 開始ボタンの幅
+        START_BUTTON_WIDTH = 80
         # 開始ボタンが実行されるキー
         START_BUTTON_EXECUTE_KEY = "<Return>"
 
@@ -164,6 +173,7 @@ class Save:
 
             # optionオブジェクトのKey
             CHATPER_URL = "chapter_url"
+            MAX_PLAYING_COUNT = "max_playing_count"
             TIME_OUT = "time_out"
             USE_SOUND_NOTICE = "use_sound_notice"
             USE_WINDOW_NOTICE = "use_window_notice"

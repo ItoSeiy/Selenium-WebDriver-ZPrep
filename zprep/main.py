@@ -1,5 +1,6 @@
 from sys import exit
 from time import sleep
+from concurrent.futures import ThreadPoolExecutor
 
 import libs.audio as audio
 import libs.const as const
@@ -27,9 +28,9 @@ def _on_finish_selenium(save_data: save.SaveData, message: str):
     if save_data.use_sound_notice:
         audio.play_sound(const.Audio.MP3.WAKKA_MP3, save_data.notice_sound_scale)
 
-    sleep(sound_length)
-    exit()
-
+def _start_selenium(save_data: save.SaveData):
+    sel = selenium.Selenium(save_data, on_finish=_on_finish_selenium)
+    sel.start()
 
 def _on_start_button_click(save_data: save.SaveData):
     if save_data is not None:
@@ -37,8 +38,9 @@ def _on_start_button_click(save_data: save.SaveData):
             save_data, const.Save.Path.DATA_PATH, const.Save.Path.FILE_NAME
         )
 
-    sel = selenium.Selenium(save_data, on_finish=_on_finish_selenium)
-    sel.start()
+    thred_pool_executor = ThreadPoolExecutor(max_workers=save_data.max_playing_count)
+    thred_pool_executor.submit(_start_selenium, save_data)
+
 
 
 def main():
@@ -50,5 +52,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    print("Starting")
-    input()
