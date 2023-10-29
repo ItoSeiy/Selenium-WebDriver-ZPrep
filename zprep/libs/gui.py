@@ -2,16 +2,16 @@ from __future__ import annotations
 
 """GUIに関する処理を行うモジュール"""
 
-import tkinter
-import tkinter.ttk as ttk
 import webbrowser
+import tkinter
+from tkinter import scrolledtext
 from typing import Callable
 
 from . import const, path, save
 
 
 def create(
-    save_data: save.SaveData, on_start_button_click: Callable[[save.SaveData], None]
+    save_data: save.SaveData, on_start_button_click: Callable[[bool, save.SaveData], None]
 ):
     """_summary_
 
@@ -64,16 +64,16 @@ def create(
     )
 
     # チャプターURL入力UIの作成
-    chapter_url_entry = tkinter.Entry(width=const.Gui.Window.ENTRY_WIDTH)
-    chapter_url_entry.place(
+    chapter_url_scrolled_entry = scrolledtext.ScrolledText(tki, width=17, height=5)
+    chapter_url_scrolled_entry.place(
         x=const.Gui.Window.CHAPTER_URL_ENTRY_POS[0],
         y=const.Gui.Window.CHAPTER_URL_ENTRY_POS[1],
     )
-    chapter_url_entry.insert(tkinter.END, save_data.chapter_url)
+    chapter_url_scrolled_entry.insert(tkinter.END, save_data.chapter_url_raw_list)
     # コントロールキーが押されたときにURLの入力UIを選択する
     tki.bind(
         const.Gui.Window.CHAPTER_URL_ENTRY_SELECT_KEY,
-        lambda x: chapter_url_entry.focus_set(),
+        lambda x: chapter_url_scrolled_entry.focus_set(),
     )
 
     # 再生できる動画の上限数のラベルの作成
@@ -114,6 +114,38 @@ def create(
         y=const.Gui.Window.TIME_OUT_ENTRY_POS[1],
     )
     time_out_entry.insert(tkinter.END, save_data.time_out)
+
+    # Chromeのウィンドウの位置のラベルの作成
+    chrome_window_pos_label = tkinter.Label(
+        text=const.Gui.Window.CHROME_WINDOW_POS_LABEL_TEXT
+    )
+    chrome_window_pos_label.place(
+        x=const.Gui.Window.CHROME_WINDOW_POS_LABEL_POS[0],
+        y=const.Gui.Window.CHROME_WINDOW_POS_LABEL_POS[1],
+    )
+    # Chromeのウィンドウの位置の入力UIの作成
+    chrome_window_pos_entry = tkinter.Entry(width=const.Gui.Window.ENTRY_WIDTH)
+    chrome_window_pos_entry.place(
+        x=const.Gui.Window.CHROME_WINDOW_POS_ENTRY_POS[0],
+        y=const.Gui.Window.CHROME_WINDOW_POS_ENTRY_POS[1],
+    )
+    chrome_window_pos_entry.insert(tkinter.END, f"{save_data.chrome_window_pos[0] + 'x' + save_data.chrome_window_pos[1]}")
+
+    # Chromeのウィンドウのサイズのラベルの作成
+    chrome_window_size_label = tkinter.Label(
+        text=const.Gui.Window.CHROME_WINDOW_SIZE_LABEL_TEXT
+    )
+    chrome_window_size_label.place(
+        x=const.Gui.Window.CHROME_WINDOW_SIZE_LABEL_POS[0],
+        y=const.Gui.Window.CHROME_WINDOW_SIZE_LABEL_POS[1],
+    )
+    # Chromeのウィンドウのサイズの入力UIの作成
+    chrome_window_size_entry = tkinter.Entry(width=const.Gui.Window.ENTRY_WIDTH)
+    chrome_window_size_entry.place(
+        x=const.Gui.Window.CHROME_WINDOW_SIZE_ENTRY_POS[0],
+        y=const.Gui.Window.CHROME_WINDOW_SIZE_ENTRY_POS[1],
+    )
+    chrome_window_size_entry.insert(tkinter.END, f"{save_data.chrome_window_size[0] + 'x' + save_data.chrome_window_size[1]}")
 
     # 通知モードのラベルの作成
     notice_mode_label = tkinter.Label(text=const.Gui.Window.NOTICE_MODE_LABEL_TEXT)
@@ -208,14 +240,15 @@ def create(
         tki,
         text=const.Gui.Window.START_BUTTON_TEXT,
         command=lambda: _on_start_button_click(
-            tki=tki,
             save_setting=save_setting_boolean_var.get(),
             new_save_data=save.SaveData(
                 student_id=student_id_entry.get(),
                 password=password_entry.get(),
-                chapter_url=chapter_url_entry.get(),
+                chapter_url=chapter_url_scrolled_entry.get(0., tkinter.END),
                 max_playing_count=max_playing_count_entry.get(),
                 time_out=time_out_entry.get(),
+                chrome_window_pos=chrome_window_pos_entry.get(),
+                chrome_window_size=chrome_window_size_entry.get(),
                 use_sound_notice=notice_mode_sound_boolean_var.get(),
                 use_window_notice=notice_mode_window_boolean_var.get(),
                 mute_video=mute_mode_boolean_var.get(),
@@ -234,14 +267,15 @@ def create(
     tki.bind(
         const.Gui.Window.START_BUTTON_EXECUTE_KEY,
         lambda x: _on_start_button_click(
-            tki=tki,
             save_setting=save_setting_boolean_var.get(),
             new_save_data=save.SaveData(
                 student_id=student_id_entry.get(),
                 password=password_entry.get(),
-                chapter_url=chapter_url_entry.get(),
+                chapter_url=chapter_url_scrolled_entry.get(0., tkinter.END),
                 max_playing_count=max_playing_count_entry.get(),
                 time_out=time_out_entry.get(),
+                chrome_window_pos=chrome_window_pos_entry.get(),
+                chrome_window_size=chrome_window_size_entry.get(),
                 use_sound_notice=notice_mode_sound_boolean_var.get(),
                 use_window_notice=notice_mode_window_boolean_var.get(),
                 mute_video=mute_mode_boolean_var.get(),
@@ -261,7 +295,6 @@ def create(
 
 
 def _on_start_button_click(
-    tki: tkinter.Tk,
     save_setting: bool,
     new_save_data: save.SaveData,
     on_start_button_click,
@@ -275,9 +308,4 @@ def _on_start_button_click(
         on_start_button_click (function): 開始ボタン押下時の処理\n
     """
 
-    if save_setting == True:
-        # 設定を保存する場合はon_start_button_clickにnew_save_dataを渡す
-        on_start_button_click(new_save_data)
-    else:
-        # 設定を保存しない場合は on_start_button_clickにはなにも渡さない
-        on_start_button_click(None)
+    on_start_button_click(save_setting, new_save_data)

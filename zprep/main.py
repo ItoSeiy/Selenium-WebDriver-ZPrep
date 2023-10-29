@@ -28,18 +28,21 @@ def _on_finish_selenium(save_data: save.SaveData, message: str):
     if save_data.use_sound_notice:
         audio.play_sound(const.Audio.MP3.WAKKA_MP3, save_data.notice_sound_scale)
 
-def _start_selenium(save_data: save.SaveData):
-    sel = selenium.Selenium(save_data, on_finish=_on_finish_selenium)
+def _start_selenium(save_data: save.SaveData, chapter_url: str):
+    sel = selenium.Selenium(save_data, chapter_url=chapter_url, on_finish=_on_finish_selenium)
     sel.start()
 
-def _on_start_button_click(save_data: save.SaveData):
-    if save_data is not None:
+def _on_start_button_click(save_setting: bool, save_data: save.SaveData):
+    if save_setting == True:
         save_data.save_to_json(
             save_data, const.Save.Path.DATA_PATH, const.Save.Path.FILE_NAME
         )
 
     thred_pool_executor = ThreadPoolExecutor(max_workers=save_data.max_playing_count)
-    thred_pool_executor.submit(_start_selenium, save_data)
+
+    for chapter_url in save_data.chapter_url_list:
+        print(chapter_url)
+        thred_pool_executor.submit(_start_selenium, save_data, chapter_url)
 
 
 

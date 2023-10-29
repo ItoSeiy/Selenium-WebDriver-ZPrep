@@ -166,13 +166,15 @@ class Selenium:
 
     "==========================汎用関数ここまで============================"
 
-    _on_finish: Callable[[save.SaveData, str], None] = None
     _save_data: save.SaveData = None
+    _chapter_url: str = None
+    _on_finish: Callable[[save.SaveData, str], None] = None
 
     def __init__(
-        self, save_data: save.SaveData, on_finish: Callable[[save.SaveData, str], None]
+        self, save_data: save.SaveData, chapter_url: str,  on_finish: Callable[[save.SaveData, str], None]
     ):
         self._save_data = save_data
+        self._chapter_url = chapter_url
         self._on_finish = on_finish
 
     def start(self):
@@ -206,14 +208,14 @@ class Selenium:
         # 指定した要素が見つかるまでの待ち時間を設定
         self._set_driver_implicitly_wait_default(driver=driver)
 
-        # ウィンドウサイズを設定
-        driver.set_window_size(
-            const.Selenium.Option.WINDOW_SIZE[0], const.Selenium.Option.WINDOW_SIZE[1]
-        )
         # ウィンドウ位置を設定
         driver.set_window_position(
-            const.Selenium.Option.WINDOW_POS[0],
-            const.Selenium.Option.WINDOW_POS[1],
+            self._save_data.chrome_window_pos[0], self._save_data.chrome_window_pos[1]
+        )
+
+        # ウィンドウサイズを設定
+        driver.set_window_size(
+            self._save_data.chrome_window_size[0], self._save_data.chrome_window_size[1]
         )
 
         # ログインページを開く
@@ -252,7 +254,7 @@ class Selenium:
         """教材ページを開く関数"""
 
         # 指定された教材を開く
-        driver.get(self._save_data.chapter_url)
+        driver.get(self._chapter_url)
 
         # 同意
         try:
