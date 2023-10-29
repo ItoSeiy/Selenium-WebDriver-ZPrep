@@ -36,7 +36,7 @@ class Gui:
         """GUIに関する定数を定義したクラス"""
 
         # 基本サイズ
-        WINDOW_GEOMETRY = "350x290"
+        WINDOW_GEOMETRY = "350x380"
         # 入力UIの幅
         ENTRY_WIDTH = 20
         # アイコンの相対パス
@@ -59,20 +59,20 @@ class Gui:
         PASSWORD_ENTRY_SHOW_TEXT = "*"
 
         # チャプターURLラベルのテキスト
-        CHAPTER_URL_LABEL_TEXT = "チャプターのURL"
+        CHAPTER_URL_LABEL_TEXT = "チャプターのURL\n(カンマ区切りで複数入力)"
         # チャプターURL入力が選択されるキー
-        CHAPTER_URL_ENTRY_SELECT_KEY = "<Control-Key>"
+        CHAPTER_URL_ENTRY_SELECT_KEY = "<Control-Key-a>"
         # チャプターURLラベルの座標
-        CHAPTER_URL_LABEL_POS = (43, 90)
+        CHAPTER_URL_LABEL_POS = (0, 90)
         # チャプターURL入力UIの座標
         CHAPTER_URL_ENTRY_POS = (130, 90)
 
         # 同時に流せる動画の数のラベルのテキスト
         MAX_PLAYING_COUNT_LABEL_TEXT = "同時に流せる動画の数"
         # 同時に流せる動画の数のラベルの座標
-        MAX_PLAYING_COUNT_LABEL_POS = (5, 120)
+        MAX_PLAYING_COUNT_LABEL_POS = (5, 170)
         # 同時に流せる動画の数の入力UIの座標
-        MAX_PLAYING_COUNT_ENTRY_POS = (130, 120)
+        MAX_PLAYING_COUNT_ENTRY_POS = (130, 170)
 
         # タイムアウトのラベルのテキスト
         TIME_OUT_LABEL_TEXT = "タイムアウト(秒)"
@@ -83,33 +83,47 @@ class Gui:
         # タイムアウトのラベルが押されたときに飛ぶURL
         TIME_OUT_LABEL_CLICK_URL = r"https://e-words.jp/w/%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%A2%E3%82%A6%E3%83%88.html#:~:text=%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%A2%E3%82%A6%E3%83%88%20%E3%80%90time%20out%E3%80%91&text=IT%E3%81%AE%E5%88%86%E9%87%8E%E3%81%A7%E3%81%AF%E3%80%81%E5%87%A6%E7%90%86,%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%82%92%E6%84%8F%E5%91%B3%E3%81%99%E3%82%8B%E3%80%82"
         # タイムアウトのラベルの座標
-        TIME_OUT_LABEL_POS = (45, 150)
+        TIME_OUT_LABEL_POS = (45, 200)
         # タイムアウト入力UIの座標
-        TIME_OUT_ENTRY_POS = (130, 150)
+        TIME_OUT_ENTRY_POS = (130, 200)
+
+        # Chromeのウィンドウの位置のラベルのテキスト
+        CHROME_WINDOW_POS_LABEL_TEXT = "ウィンドウの初期位置"
+        # Chromeのウィンドウの位置のラベルの座標
+        CHROME_WINDOW_POS_LABEL_POS = (5, 230)
+        # Chromeのウィンドウの位置の入力UIの座標
+        CHROME_WINDOW_POS_ENTRY_POS = (130, 230)
+
+        # Chromeのウィンドウのサイズのラベルのテキスト
+        CHROME_WINDOW_SIZE_LABEL_TEXT = "ウィンドウの初期サイズ"
+        # Chromeのウィンドウのサイズのラベルの座標
+        CHROME_WINDOW_SIZE_LABEL_POS = (5, 260)
+        # Chromeのウィンドウのサイズの入力UIの座標
+        CHROME_WINDOW_SIZE_ENTRY_POS = (130, 260)
 
         # 通知モードのテキスト
         NOTICE_MODE_LABEL_TEXT = "通知モード"
         # 通知モードラベルの座標
-        NOTICE_MODE_LABEL_POS = (30, 180)
+        NOTICE_MODE_LABEL_POS = (30, 290)
 
         # サウンドの通知モードのテキスト
         NOTICE_MODE_SOUND_CHECKBOX_TEXT = "ワッカさん"
         # ウィンドウの通知モードのテキスト
         NOTICE_MODE_WINDOW_CHECKBOX_TEXT = "ウィンドウ"
         # サウンドの通知モードのチェックボックスの座標
-        NOTICE_MODE_SOUND_CHECKBOX_POS = (125, 180)
+        NOTICE_MODE_SOUND_CHECKBOX_POS = (125, 290)
         # ウィンドウの通知モードのチェックボックスの座標
-        NOTICE_MODE_WINDOW_CHECKBOX_POS = (195, 180)
+        NOTICE_MODE_WINDOW_CHECKBOX_POS = (195, 290)
 
         # 動画のミュートのテキスト
         MUTE_VIDEO_LABEL_TEXT = "動画の音をミュートする"
         # 動画のミュートのチェックボックスの座標
-        MUTE_VIDEO_CHECKBOX_POS = (125, 200)
+        MUTE_VIDEO_CHECKBOX_POS = (125, 310)
 
         # 設定保存のラベルのテキスト
         SAVE_SETTING_LABEL_TEXT = "次回からもこの設定を利用する"
         # 設定保存ボタンの座標
-        SAVE_SETTING_BUTTON_POS = (125, 220)
+        SAVE_SETTING_BUTTON_POS = (125, 310)
 
         # 通知音量のテキスト
         NOTICE_SOUND_SCALE_LABEL_TEXT = "ワッカさんの声量"
@@ -132,11 +146,11 @@ class Gui:
         # 開始ボタンのテキスト
         START_BUTTON_TEXT = "開始"
         # 開始ボタンの座標
-        START_BUTTON_POS = (140, 250)
+        START_BUTTON_POS = (140, 340)
         # 開始ボタンの幅
         START_BUTTON_WIDTH = 80
         # 開始ボタンが実行されるキー
-        START_BUTTON_EXECUTE_KEY = "<Return>"
+        START_BUTTON_EXECUTE_KEY = "<Control-Key-Return>"
 
 
 class Log:
@@ -175,6 +189,8 @@ class Save:
             CHATPER_URL = "chapter_url"
             MAX_PLAYING_COUNT = "max_playing_count"
             TIME_OUT = "time_out"
+            CHROME_WINDOW_POS = "chrome_window_pos"
+            CHROME_WINDOW_SIZE = "chrome_window_size"
             USE_SOUND_NOTICE = "use_sound_notice"
             USE_WINDOW_NOTICE = "use_window_notice"
             NOTICE_SOUND_SCALE = "notice_sound_scale"
@@ -198,11 +214,6 @@ class Selenium:
         LOG_LEVEL_3 = "--log-level=3"
         # 長文ログの無効化
         EXPERMENTAL_OPTION = ("excludeSwitches", ["enable-logging"])
-
-        # ウィンドウサイズ
-        WINDOW_SIZE = (1500, 1000)
-        # ウィンドウ位置
-        WINDOW_POS = (550, 300)
 
     class Url:
         """URLを定義したクラス"""

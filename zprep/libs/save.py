@@ -15,13 +15,15 @@ class SaveData:
         self,
         student_id: str = "",
         password: str = "",
-        chapter_url: str = "",
+        chapter_url: str = "your,\nurl",
         max_playing_count: int = 50,
-        time_out: int = 5,
+        time_out: float = 5.0,
+        chrome_window_pos: str = "550x300",
+        chrome_window_size: tuple = "1500x1000",
         use_sound_notice: bool = True,
         use_window_notice: bool = True,
         mute_video: bool = True,
-        notice_sound_scale: float = True,
+        notice_sound_scale: float = 0.5,
     ):
         self.login_info = {}
         self.login_info = {
@@ -34,6 +36,8 @@ class SaveData:
             const.Save.SaveDataJsonKey.String.CHATPER_URL: chapter_url,
             const.Save.SaveDataJsonKey.String.MAX_PLAYING_COUNT: max_playing_count,
             const.Save.SaveDataJsonKey.String.TIME_OUT: time_out,
+            const.Save.SaveDataJsonKey.String.CHROME_WINDOW_POS: chrome_window_pos,
+            const.Save.SaveDataJsonKey.String.CHROME_WINDOW_SIZE: chrome_window_size,
             const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE: use_sound_notice,
             const.Save.SaveDataJsonKey.String.USE_WINDOW_NOTICE: use_window_notice,
             const.Save.SaveDataJsonKey.String.MUTE_VIDEO: mute_video,
@@ -68,6 +72,24 @@ class SaveData:
                     chapter_url=dec[const.Save.SaveDataJsonKey.Object.OPTION][
                         const.Save.SaveDataJsonKey.String.CHATPER_URL
                     ],
+                    max_playing_count=int(
+                        dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                            const.Save.SaveDataJsonKey.String.MAX_PLAYING_COUNT
+                        ]
+                    ),
+                    time_out=float(
+                        dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                            const.Save.SaveDataJsonKey.String.TIME_OUT
+                        ]
+                    ),
+                    chrome_window_pos=
+                        dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                            const.Save.SaveDataJsonKey.String.CHROME_WINDOW_POS
+                    ],
+                    chrome_window_size=
+                        dec[const.Save.SaveDataJsonKey.Object.OPTION][
+                            const.Save.SaveDataJsonKey.String.CHROME_WINDOW_SIZE
+                    ],
                     use_sound_notice=bool(
                         dec[const.Save.SaveDataJsonKey.Object.OPTION][
                             const.Save.SaveDataJsonKey.String.USE_SOUND_NOTICE
@@ -89,7 +111,7 @@ class SaveData:
                         ]
                     ),
                 )
-        except FileNotFoundError:
+        except (FileNotFoundError, KeyError):
             # ファイルが存在しない場合は空なセーブデータを返す
             return SaveData()
 
@@ -128,9 +150,16 @@ class SaveData:
         return self.login_info[const.Save.SaveDataJsonKey.String.PASSWORD]
 
     @property
-    def chapter_url(self) -> str:
-        """チャプターURLを取得する"""
+    def chapter_url_raw_list(self) -> list[str]:
+        """チャプターURLを未整形のリストとして取得する"""
         return self.option[const.Save.SaveDataJsonKey.String.CHATPER_URL]
+
+    @property
+    def chapter_url_list(self) -> list[str]:
+        """チャプターURLをリストとして取得する"""
+        return str(self.option[const.Save.SaveDataJsonKey.String.CHATPER_URL]
+                    ).replace(' ', '').replace('　', '').replace('\t', '').replace('\n', '').split(',')
+
 
     @property
     def max_playing_count(self) -> int:
@@ -141,6 +170,22 @@ class SaveData:
     def time_out(self) -> float:
         """タイムアウトを取得する"""
         return float(self.option[const.Save.SaveDataJsonKey.String.TIME_OUT])
+
+    @property
+    def chrome_window_pos(self) -> tuple:
+        """Chromeのウィンドウの位置を取得する"""
+
+        splited_pos = self.option[const.Save.SaveDataJsonKey.String.CHROME_WINDOW_POS].split('x')
+
+        return (splited_pos[0], splited_pos[1])
+
+    @property
+    def chrome_window_size(self) -> tuple:
+        """Chromeのウィンドウのサイズを取得する"""
+
+        splited_pos = self.option[const.Save.SaveDataJsonKey.String.CHROME_WINDOW_SIZE].split('x')
+
+        return (splited_pos[0], splited_pos[1])
 
     @property
     def use_sound_notice(self) -> bool:
