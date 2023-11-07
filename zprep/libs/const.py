@@ -244,16 +244,16 @@ class Selenium:
 
         # 同意チェック項目
         AGREEMENT_ELEMENTS = [
-            "/html/body/div[5]/div/div/div/form/div[1]/div/div/div[1]/input",
-            "/html/body/div[5]/div/div/div/form/div[1]/div/div/div[2]/input",
-            "/html/body/div[5]/div/div/div/form/div[1]/div/div/div[3]/input",
-            "/html/body/div[5]/div/div/div/form/div[1]/div/div/div[4]/input",
-            "/html/body/div[5]/div/div/div/form/div[1]/div/div/div[5]/input",
+            '//*[@id="report-notice-item-1"]',
+            '//*[@id="report-notice-item-2"]',
+            '//*[@id="report-notice-item-3"]',
+            '//*[@id="report-notice-item-4"]',
+            '//*[@id="report-notice-item-5"]',
         ]
-        AGREEMENT_BUTTON = "/html/body/div[5]/div/div/div/form/div[2]/button"
+        AGREEMENT_BUTTON = "/html/body/div[4]/div/div/div/form/div[2]/button"
 
         # 必修教材のみボタン
-        ONLY_REQUIRED_SUBJECT_BUTTON = "/html/body/div[1]/div/div[2]/div[2]/main/div[2]/div[1]/div[1]/div[2]/div/div[2]/button[1]"
+        ONLY_REQUIRED_SUBJECT_BUTTON = '//*[@id="root"]/div/div[2]/div[2]/main/div[2]/div/div[1]/div[2]/div/div[2]/button[1]'
 
         # 動画、テストのエレメントのリストの格納場所
         SUBJECT_ELEMENTS_CONTAINER = (
