@@ -134,7 +134,7 @@ class Selenium:
         try:
             # 未開放と判定できるエレメントを探す
             element.find_element(
-                By.CSS_SELECTOR, const.Selenium.SpecificPath.UNOPENED_ELEMENT_PATH
+                By.CSS_SELECTOR, const.Selenium.CSSSelector.UNOPENED_ELEMENT_PATH
             )
             # ここまで処理が来たら未開放と判定できるエレメントが見つかったので、Falseを返す
             return False
@@ -273,7 +273,7 @@ class Selenium:
             driver.find_element(
                 By.XPATH, const.Selenium.XPath.AGREEMENT_ELEMENTS[4]
             ).click()
-            driver.find_element(By.XPATH, const.Selenium.XPath.AGREEMENT_BUTTON).click()
+            driver.find_element(By.CSS_SELECTOR, const.Selenium.CSSSelector.AGREEMENT_BUTTON).click()
         except:
             None
 

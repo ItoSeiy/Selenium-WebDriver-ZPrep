@@ -250,7 +250,6 @@ class Selenium:
             '//*[@id="report-notice-item-4"]',
             '//*[@id="report-notice-item-5"]',
         ]
-        AGREEMENT_BUTTON = "/html/body/div[4]/div/div/div/form/div[2]/button"
 
         # 必修教材のみボタン
         ONLY_REQUIRED_SUBJECT_BUTTON = '//*[@id="root"]/div/div[2]/div[2]/main/div[2]/div/div[1]/div[2]/div/div[2]/button[1]'
@@ -260,14 +259,23 @@ class Selenium:
             '//*[@id="root"]/div/div[2]/div[2]/main/div[2]/div[1]/div[1]/ul'
         )
 
+    class CSSSelector:
+
+        # エレメントが未開放かどうかの判定に必要なエレメント
+        UNOPENED_ELEMENT_PATH = ".sc-aXZVg.sc-gEvEer.hYNtMZ.fteAEG.sc-1otp79h-0.sc-35qwhb-0.evJGlU.hoWVG"
+
+        # 同意ボタン
+        AGREEMENT_BUTTON = ".sc-aXZVg.tTAOW.sc-13j7nb-0.sc-zakwob-5.fkqmuQ.emsFCm"
+
+
     class Tag:
         """タグを定義したクラス"""
 
-        LIST_ITEM = "li"
+        CLASS = "CLASS"
 
         DIVISION = "div"
 
-        CLASS = "CLASS"
+        LIST_ITEM = "li"
 
     class SpecificPath:
         """具体的なエレメントまでのパスを定義したクラス"""
@@ -289,8 +297,3 @@ class Selenium:
 
         # 動画時間の取得に必要なエレメントまでのパス
         VIDEO_LENGTH_PATH = ("div", "div", ".sc-aXZVg.iuHQbN")
-
-        # エレメントが未開放かどうかの判定に必要なエレメントまでのパス
-        UNOPENED_ELEMENT_PATH = (
-            ".sc-aXZVg.sc-gEvEer.hYNtMZ.fteAEG.sc-1otp79h-0.sc-35qwhb-0.evJGlU.hoWVG"
-        )
